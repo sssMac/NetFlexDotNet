@@ -47,6 +47,33 @@ class AuthController{
             return next(new createError(400, "Server error"))
         }
     }
+    async login(req, res, next) {
+        try {
+            const {email, password} = req.body
+
+            const user = await userService.findOne(email)
+
+            if (!user)
+                return next(new createError(404, `User with email ${email} not fund`))
+
+            if (!bcrypt.compareSync(password,user.PasswordHash))
+                return next(new createError(400,'Invalid password'))
+
+            const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
+
+            return res.status(200).json({
+                accessToken: accessToken,
+                user: {
+                    email: email,
+                    password: password
+                }
+            })
+
+        } catch (e) {
+            console.log(e)
+            return next(new createError(400, "Server error"))
+        }
+    }
 }
 
 
