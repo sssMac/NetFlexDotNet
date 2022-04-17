@@ -6,10 +6,13 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const {randomUUID} = require("crypto");
 const jwt = require("jsonwebtoken");
+const corsMiddleware = require('../.././middleware/cors.middleware')
+
 
 class AuthController{
     async registration(req, res, next) {
         try {
+            cros
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 return next(new createError(400, errors));
@@ -43,8 +46,8 @@ class AuthController{
             })
 
         } catch (e) {
-            console.log(e)
-            return next(new createError(400, "Server error"))
+            console.log(e.message)
+            return next(new createError(406, e.message))
         }
     }
 }
