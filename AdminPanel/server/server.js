@@ -1,5 +1,6 @@
 const express = require("express");
 const seriesRouter = require("./src/routes/seriesRouter");
+const authRouter = require('./src/routes/authRouter')
 const createError = require("./src/errors/createError");
 
 const app = express();
@@ -9,6 +10,7 @@ const port = 3000;
 
 // set routes..
 app.use("/series", seriesRouter);
+app.use("/auth", authRouter);
 
 // home handler
 app.get("/", (res, rep) => {
@@ -21,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 // error handler
-app.use((err, req, res,next) => {
+app.use((err, req, res, next) => {
     res.status(err.code || 500);
     res.send({
         status: err.code,

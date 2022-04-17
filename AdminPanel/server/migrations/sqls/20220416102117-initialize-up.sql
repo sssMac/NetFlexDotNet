@@ -185,14 +185,6 @@ CREATE TABLE IF NOT EXISTS public."AspNetUsers"
     "NormalizedEmail" character varying(256) COLLATE pg_catalog."default",
     "EmailConfirmed" boolean NOT NULL,
     "PasswordHash" text COLLATE pg_catalog."default",
-    "SecurityStamp" text COLLATE pg_catalog."default",
-    "ConcurrencyStamp" text COLLATE pg_catalog."default",
-    "PhoneNumber" text COLLATE pg_catalog."default",
-    "PhoneNumberConfirmed" boolean NOT NULL,
-    "TwoFactorEnabled" boolean NOT NULL,
-    "LockoutEnd" timestamp with time zone,
-    "LockoutEnabled" boolean NOT NULL,
-    "AccessFailedCount" integer NOT NULL,
     CONSTRAINT "PK_AspNetUsers" PRIMARY KEY ("Id")
 )
 
