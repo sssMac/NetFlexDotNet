@@ -11,11 +11,17 @@ class UserService {
     async save(userDTO){
         const user = await db.query(queries.addUser, [userDTO.Id,userDTO.Email,userDTO.Password])
         if (user.error) return null
+        await db.query(queries.addUserRole, [userDTO.Id,'2'])
         return user.rows[0];
     }
     async saveToken(userId,accessToken){
         const user = await db.query(queries.saveToken, [userId,accessToken])
         if (user.error) return null
+    }
+    async hasToken(userId){
+        const user = await db.query(queries.hasToken, [userId])
+        if (user.error) return null
+        return user.rows[0];
     }
 }
 
