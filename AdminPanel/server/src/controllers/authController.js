@@ -7,7 +7,7 @@ const User = require("../models/user");
 const {randomUUID} = require("crypto");
 const jwt = require("jsonwebtoken");
 
-class AuthController{
+class AuthController {
     async registration(req, res, next) {
         try {
             const errors = validationResult(req)
@@ -32,7 +32,7 @@ class AuthController{
 
             const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
 
-            await userService.saveToken(user.Id,accessToken);
+            await userService.saveToken(user.Id, accessToken);
 
             return res.status(200).json({
                 accessToken: accessToken,
@@ -47,6 +47,7 @@ class AuthController{
             return next(new createError(400, e.message))
         }
     }
+
     async login(req, res, next) {
         try {
             const {email, password} = req.body
@@ -56,10 +57,12 @@ class AuthController{
             if (!user)
                 return next(new createError(404, `User with email ${email} not fund`))
 
-            if (!bcrypt.compareSync(password,user.PasswordHash))
-                return next(new createError(400,'Invalid password'))
+            if (!bcrypt.compareSync(password, user.PasswordHash))
+                return next(new createError(400, 'Invalid password'))
 
-            const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
+            let accessToken = await userService.hasToken(user.Id);
+            if (!accessToken)
+                accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
 
             return res.status(200).json({
                 accessToken: accessToken,
@@ -70,6 +73,16 @@ class AuthController{
             })
 
         } catch (e) {
+            console.log(e)
+            return next(new createError(400, e.message))
+        }
+    }
+
+    async blockUser(req, res, next) {
+        try {
+           ///
+            res.status(200).json({ hi : 'hi'})
+        } catch (e){
             console.log(e)
             return next(new createError(400, e.message))
         }

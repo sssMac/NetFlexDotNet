@@ -1,6 +1,7 @@
 const express = require("express");
 const seriesRouter = require("./src/routes/seriesRouter");
 const authRouter = require('./src/routes/authRouter')
+const rolesRouter = require('./src/routes/rolesRouter')
 const createError = require("./src/errors/createError");
 
 const app = express();
@@ -11,6 +12,7 @@ const port = 3000;
 // set routes..
 app.use("/series", seriesRouter);
 app.use("/auth", authRouter);
+app.use("/roles", rolesRouter);
 
 // home handler
 app.get("/", (res, rep) => {
