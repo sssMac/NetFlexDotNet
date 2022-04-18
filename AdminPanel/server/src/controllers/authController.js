@@ -44,7 +44,7 @@ class AuthController{
 
         } catch (e) {
             console.log(e)
-            return next(new createError(400, "Server error"))
+            return next(new createError(400, e.message))
         }
     }
     async login(req, res, next) {
@@ -71,7 +71,7 @@ class AuthController{
 
         } catch (e) {
             console.log(e)
-            return next(new createError(400, "Server error"))
+            return next(new createError(400, e.message))
         }
     }
 }
