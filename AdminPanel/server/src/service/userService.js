@@ -23,6 +23,16 @@ class UserService {
         if (user.error) return null
         return user.rows[0];
     }
+    async blockUser(userId){
+        const user = await db.query(queries.blockUser, [userId])
+        if (user.error) return null
+        return user.rows[0];
+    }
+    async unblockUser(userId){
+        const user = await db.query(queries.unblockUser, [userId])
+        if (user.error) return null
+        return user.rows[0];
+    }
 }
 
 module.exports = new UserService();

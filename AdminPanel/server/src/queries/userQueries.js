@@ -6,6 +6,9 @@ const addUser = 'insert into "AspNetUsers" ("Id","Email","PasswordHash","EmailCo
 const saveToken = 'insert into "AspNetUserTokens" ("UserId", "LoginProvider", "Name", "Value") values ($1,\'user\',\'accessToken\',$2)';
 const hasToken = 'select "Value" from "AspNetUserTokens" where "UserId" = $1';
 const addUserRole = 'insert into "AspNetUserRoles" ("UserId", "RoleId") values ($1,$2);'
+const blockUser = 'update "AspNetUserTokens" set "LoginProvider" = \'blocked\' where "UserId" = $1';
+const unblockUser = 'update "AspNetUserTokens" set "LoginProvider" = \'user\' where "UserId" = $1';
+const isBlocked = 'select "LoginProvider" from "AspNetUserTokens" where "UserId" = $1';
 module.exports = {
     getUserIdByToken,
     getRoleName,
@@ -13,5 +16,8 @@ module.exports = {
     addUser,
     saveToken,
     hasToken,
-    addUserRole
+    addUserRole,
+    blockUser,
+    unblockUser,
+    isBlocked
 };

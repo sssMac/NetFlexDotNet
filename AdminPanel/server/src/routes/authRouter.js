@@ -13,4 +13,6 @@ router.post('/login',authController.login)
 
 router.post('/block',verifyAdmin,authController.blockUser)
 
+router.post('/unblock',verifyAdmin,authController.unblockUser)
+
 module.exports = router;

@@ -63,9 +63,8 @@ class AuthController {
             let accessToken = await userService.hasToken(user.Id);
             if (!accessToken)
                 accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
-
             return res.status(200).json({
-                accessToken: accessToken,
+                accessToken: accessToken.Value,
                 user: {
                     email: email,
                     password: password
@@ -80,8 +79,35 @@ class AuthController {
 
     async blockUser(req, res, next) {
         try {
-           ///
-            res.status(200).json({ hi : 'hi'})
+            const {email} = req.body
+            const user = await userService.findOne(email)
+
+            if (!user)
+                return next(new createError(404, `User with email ${email} not found`))
+
+            await userService.blockUser(user.Id)
+
+           return res.status(200).json({
+                massage : `User with email ${email} is blocked`
+            })
+        } catch (e){
+            console.log(e)
+            return next(new createError(400, e.message))
+        }
+    }
+    async unblockUser(req, res, next) {
+        try {
+            const {email} = req.body
+            const user = await userService.findOne(email)
+
+            if (!user)
+                return next(new createError(404, `User with email ${email} not found`))
+
+            await userService.unblockUser(user.Id)
+
+            res.status(200).json({
+                massage : `User with email ${email} is unblocked`
+            })
         } catch (e){
             console.log(e)
             return next(new createError(400, e.message))
