@@ -1,10 +1,9 @@
 import React, {useEffect} from "react";
 import './app.css'
-import {BrowserRouter, Route, Switch} from "react-router-dom";
-import Registration from "./autorization/registration";
-import Login from "./autorization/login";
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {auth} from "../actions/user";
+import {privateRoutes, publicRoutes} from "../routes/Routes";
 
 function App() {
     const isAuth = useSelector(state => state.user.isAuth)
@@ -18,10 +17,28 @@ function App() {
 
       <BrowserRouter>
           <div className="app">
-              {!isAuth &&
+              {!isAuth ?
                   <Switch>
-                      <Route path="/signup" component={Registration}/>
-                      <Route path="/signin" component={Login}/>
+                      {publicRoutes.map((route) => (
+                          <Route
+                              component={route.component}
+                              path={route.path}
+                              exact={route.exact}
+                              key={route.path}
+                          />
+                      ))}
+                  </Switch>
+                  :
+                  <Switch>
+                      {privateRoutes.map((route) => (
+                          <Route
+                              component={route.component}
+                              path={route.path}
+                              exact={route.exact}
+                              key={route.path}
+                          />
+                      ))}
+                      <Redirect to="/adminPanel"/>
                   </Switch>
               }
 
