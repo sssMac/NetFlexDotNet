@@ -2,7 +2,7 @@
   "dev": {
     "driver": "pg",
     "user": "postgres",
-    "password": "russiamedved",
+    "password": "asas1212",
     "host": "localhost",
     "port": 5432,
     "database": "netflix"
