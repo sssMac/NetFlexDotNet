@@ -50,9 +50,11 @@ class AuthController {
 
     async login(req, res, next) {
         try {
+
             const {email, password} = req.body
 
             const user = await userService.findOne(email)
+
 
             if (!user)
                 return next(new createError(404, `User with email ${email} not fund`))
@@ -64,7 +66,7 @@ class AuthController {
             if (!accessToken)
                 accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
             return res.status(200).json({
-                accessToken: accessToken.Value,
+                accessToken,
                 user: {
                     email: email,
                     password: password
@@ -74,6 +76,22 @@ class AuthController {
         } catch (e) {
             console.log(e)
             return next(new createError(400, e.message))
+        }
+    }
+
+    async Auth(req, res, next) {
+        try {
+            const user = await userService.findOne(req.user.user.Email)
+
+            const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "1h"})
+
+            return res.status(200).json({
+                accessToken,
+                user
+            })
+        } catch (e) {
+            console.log(e)
+            return next(new createError(400, 'Server error'))
         }
     }
 
