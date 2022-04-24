@@ -6,19 +6,21 @@ const queries = require("../src/queries/userQueries");
 const config = process.env;
 
 const verifyToken = (req, res, next) => {
-    const token =
-        req.body.token || req.query.token || req.headers["access-token"];
+    if (req.method === 'OPTIONS') {
+        return next()
+    }
 
-    if (!token) {
-        return next(new createError(403,"A token is required for authentication"))
-    }
     try {
-        const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
-        req.user = decoded;
-    } catch (err) {
-        return next(new createError(401,"Invalid Token"))
+        const token = req.headers.authorization.split(' ')[1]
+        if (!token) {
+            return res.status(401).json({message: 'Auth error'})
+        }
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        req.user = decoded
+        next()
+    } catch (e) {
+        return res.status(401).json({message: 'Auth error'})
     }
-    return next();
 };
 
 async function verifyAdmin(req,res,next){

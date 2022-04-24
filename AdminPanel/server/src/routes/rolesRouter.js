@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 const rolesController = require('../controllers/rolesController')
-const {verifyAdmin} = require('../../middleware/auth')
+const {verifyAdmin} = require('../../middleware/authMiddleware')
 require("express");
 
 router.post('/createRole',verifyAdmin,rolesController.createRole)
