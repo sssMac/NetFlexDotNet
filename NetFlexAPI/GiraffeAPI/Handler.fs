@@ -4,6 +4,8 @@ open System.Runtime.CompilerServices
 open GiraffeAPI.Data
 open GiraffeAPI.Models
 open GiraffeAPI.Models.User
+open GiraffeAPI.Models.CreateUserRequest
+open GiraffeAPI.Models.UpdateUserRequest
 open Microsoft.AspNetCore.Http
 open Giraffe
 open ApplicationContext
@@ -13,49 +15,71 @@ let UsersHandler =
             let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
             getAll context |> ctx.WriteJsonAsync
             
+     // DONE
+            
 let UserHandler (id : Guid) = 
     fun (next : HttpFunc) (ctx : HttpContext) -> 
         let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
         getUser context id |> function
             | Some l -> ctx.WriteJsonAsync l
             | None -> (setStatusCode 404 >=> json "User not found") next ctx
+            
+    // DONE
 
 let userAddHandler : HttpHandler = 
     fun (next : HttpFunc) (ctx : HttpContext) -> 
-        task {
+        task { 
             let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
-            let! user = ctx.BindJsonAsync<User>()
-            addUserAsync context user
-            return! next ctx
+            let! user = ctx.BindJsonAsync<CreateUserRequest>()
+            match user.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addUserAsync context user.GetUser
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "User with login or") next ctx
         }
-let UserUpdateHandler (id : Guid) = 
+        
+        /// DONE
+let UserUpdateHandler : HttpHandler = 
     fun (next : HttpFunc) (ctx : HttpContext) -> 
         task { 
             let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
             let! user = ctx.BindJsonAsync<User>()
-            updateUser context user
-            return! next ctx
+            match user.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! updateUser context user user.Id |> function 
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "User not updated") next ctx
         }
+
+        // DONE
+        
+        
 let UserBanHandler (id : Guid) = 
     fun (next : HttpFunc) (ctx : HttpContext) -> 
         let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
         banUser context id |> function 
         | Some l -> ctx.WriteJsonAsync l
-        | None -> (setStatusCode 404 >=> json "User not banned") next ctx
-
+        | None -> (setStatusCode 404 >=> json "User not found or already banned") next ctx
+        
+        // DONE
+        
 let UserUnbanHandler (id : Guid) = 
     fun (next : HttpFunc) (ctx : HttpContext) -> 
         let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
         unbunUser context id |> function 
         | Some l -> ctx.WriteJsonAsync l
-        | None -> (setStatusCode 404 >=> json "User not unbanned") next ctx
+        | None -> (setStatusCode 404 >=> json "User not found or already unbanned") next ctx
         
+        // DONE
 let UserDeleteHandler (id : Guid) = 
     fun (next : HttpFunc) (ctx : HttpContext) -> 
         let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
         deleteUser context id |> function
         | Some l -> ctx.WriteJsonAsync l
         | None -> (setStatusCode 404 >=> json "User not deleted") next ctx
-//        deleteUser context id |> function 
-//        | l -> ctx.WriteJsonAsync l
-//        | None -> (setStatusCode 404 >=> json "User not deleted") next ctx
+        
+        //DONE
