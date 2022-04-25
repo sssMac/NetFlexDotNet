@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NetFlexAPI.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220419193106_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220425152701_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
