@@ -33,6 +33,11 @@ class UserService {
         if (user.error) return null
         return user.rows[0];
     }
+    async allUsers(){
+        const result = await db.query(queries.allUsers)
+        if (result.error) return null
+        return result.rows;
+    }
 }
 
 module.exports = new UserService();
