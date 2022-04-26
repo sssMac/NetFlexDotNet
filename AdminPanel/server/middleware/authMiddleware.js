@@ -6,20 +6,22 @@ const queries = require("../src/queries/userQueries");
 const config = process.env;
 
 const verifyToken = (req, res, next) => {
+
     if (req.method === 'OPTIONS') {
         return next()
     }
 
     try {
-        const token = req.headers.authorization.split(' ')[1]
+        const accessToken = req.headers.authorization.split(' ')[1]
         if (!token) {
-            return res.status(401).json({message: 'Auth error'})
         }
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
+        console.log(decoded)
+
         req.user = decoded
+
         next()
     } catch (e) {
-        return res.status(401).json({message: 'Auth error'})
     }
 };
 

@@ -42,7 +42,7 @@ function App() {
                                     key={route.path}
                                 />
                             ))}
-                            <Redirect to="/adminPanel"/>
+                            <Redirect to="/AdminPanel"/>
                         </AdminPanel>
                   </Switch>
               }

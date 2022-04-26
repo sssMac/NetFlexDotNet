@@ -9,7 +9,7 @@ class UserService {
         return user.rows[0];
     }
     async save(userDTO){
-        const user = await db.query(queries.addUser, [userDTO.Id,userDTO.Email,userDTO.Password])
+        const user = await db.query(queries.addUser, [userDTO.Id,userDTO.Email,userDTO.Password,userDTO.UserName,userDTO.NormalizedUserName,userDTO.Avatar, userDTO.NormalizedEmail])
         if (user.error) return null
         await db.query(queries.addUserRole, [userDTO.Id,'2'])
         return user.rows[0];

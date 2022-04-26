@@ -6,7 +6,6 @@ import Genres from "../components/AdminPanel/genresManager/genres";
 import Subscriptions from "../components/AdminPanel/subscriptionsManager/subscriptions";
 import Login from "../components/autorization/login";
 import Registration from "../components/autorization/registration";
-import AdminPanel from "../components/AdminPanel/AdminPanel";
 
 export const privateRoutes = [
     { path: '/AdminPanel/users', component: Users, exact: true },

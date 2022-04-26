@@ -10,13 +10,13 @@ const User = ({user}) => {
     return (
         <div className='user'>
             <img src={userIcon} alt="" className="userIcon"/>
-            <div className="userName">{user.name}</div>
-            <div className="userEmail">{user.email}</div>
-            <div className="userEmailConf">{user.emailConfirmed}</div>
-            <div className="userStatus">{user.status}</div>
+            <div className="userName">{user.Name}</div>
+            <div className="userEmail">{user.Email}</div>
+            <div className="userEmailConf">{user.EmailConfirmed}</div>
+            <div className="userStatus">{user.Status}</div>
 
-            <button className="btnBlock" onClick={() => dispatch(block(user.email))}>Block</button>
-            <button className="btnBlock" onClick={() => dispatch(unblock(user.email))}>Unblocl</button>
+            <button className="btnBlock" onClick={() => dispatch(block(user.Email))}>Block</button>
+            <button className="btnBlock" onClick={() => dispatch(unblock(user.Email))}>UnblocK</button>
         </div>
     );
 };

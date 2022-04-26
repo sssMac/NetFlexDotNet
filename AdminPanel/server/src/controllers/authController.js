@@ -25,8 +25,12 @@ class AuthController {
                 return next(new createError(400, `User with email ${email} already exist`))
 
             const hashPassword = await bcrypt.hash(password, 8)
+            const userName = email.split(' ')[0];
+            const normalizedUserName = userName.normalize();
+            const normalizedEmail = email.normalize();
+            const Avatar = "https://raw.githubusercontent.com/1dxrpz/video-player-test-js/main/Netflix%20icon.svg"
 
-            const user = new User(randomUUID(), email, hashPassword)
+            const user = new User(randomUUID(), email, hashPassword, userName, normalizedUserName, Avatar, normalizedEmail)
 
             await userService.save(user)
 
@@ -35,7 +39,7 @@ class AuthController {
             await userService.saveToken(user.Id, accessToken);
 
             return res.status(200).json({
-                accessToken: accessToken,
+                accessToken: accessToken.Value,
                 user: {
                     email: email,
                     password: password
@@ -65,6 +69,7 @@ class AuthController {
             let accessToken = await userService.hasToken(user.Id);
             if (!accessToken)
                 accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
+
             return res.status(200).json({
                 accessToken,
                 user: {
@@ -84,6 +89,8 @@ class AuthController {
             const user = await userService.findOne(req.user.user.Email)
 
             const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "1h"})
+
+            console.log(accessToken)
 
             return res.status(200).json({
                 accessToken,

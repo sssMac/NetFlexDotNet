@@ -5,25 +5,19 @@ import User from "./user/user";
 
 const Users = () => {
     const [data, setData] = useState();
-    useEffect(() => {
-        /*await fetch("http://localhost:5000/api/GetUsers", {
-            method: "POST",
+    useEffect(async () => {
+        await fetch("http://localhost:5000/user/all", {
+            method: "GET",
             headers: {
-                "Auhtorization": localStorage.getItem("token")
+                "Authorization": localStorage.getItem("token")
             }
         })
             .then(res => res.json())
-            .then(res => setData(res))*/
-        setInterval(() => {
-            setData([
-                {id: 1, name: 'kekis', email: 'kekis@mail.ru', emailConfirmed: 'true', status: 'true' },
-                {id: 2, name: 'kekis', email: 'kekis@mail.ru', emailConfirmed: 'true', status: 'true' }]
-                .map(user => <User key={user.id} user={user}/>))
-        }, 1000)
+            .then(res => setData(res))
     }, []);
 
     //const users = useSelector(state => state.users.users).map(user => <User key={user.id} file={user}/>)
-
+    console.log(data)
     return (
         <div className='userList'>
             <div className="userListHeader">
@@ -32,7 +26,11 @@ const Users = () => {
                 <div className="userListEmailConf">Email Confirmed</div>
                 <div className="userListStatus">Status</div>
             </div>
-            {data}
+            {
+                data ? (
+                    data.map(user => <User key={user.id} user={user}/>)
+                ) : <span>Загрузка...</span>
+            }
         </div>
     );
 };

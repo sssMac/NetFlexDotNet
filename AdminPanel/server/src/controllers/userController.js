@@ -15,6 +15,8 @@ class AuthController {
                 return new userDto(
                     u.Id,
                     u.Email,
+                    u.UserName,
+                    u.Avatar,
                     u.EmailConfirmed,
                     u.Status)
             }))
