@@ -35,7 +35,7 @@ h3.topic_bottom {
   }
 
   button {
-    background: #e50914;
+    background: #e50917;
     width: 100%;
     border-radius: 4px;
     font-size: 16px;
@@ -44,6 +44,10 @@ h3.topic_bottom {
     color: #fff;
     padding: 16px;
     border: none;
+
+    &:hover{
+      background-color: darkred;
+    }
   }
 
   .otherInfo{

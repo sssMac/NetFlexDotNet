@@ -9,7 +9,6 @@ import Registration from "../components/autorization/registration";
 import AdminPanel from "../components/AdminPanel/AdminPanel";
 
 export const privateRoutes = [
-    { path: '/adminPanel', component: AdminPanel, exact: true },
     { path: '/AdminPanel/users', component: Users, exact: true },
     { path: '/AdminPanel/movies', component: Movies, exact: true },
     { path: '/AdminPanel/serials', component: Serials, exact: true },

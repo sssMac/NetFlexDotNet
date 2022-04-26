@@ -1,0 +1,41 @@
+.user {
+  margin: 10px ;
+  background-color: darkslategray;
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: 1fr 4fr repeat(4, 1fr);
+  align-items: center;
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+
+  .userIcon {
+    justify-self: center;
+    width: 50px;
+    margin-left: 40px;
+  }
+  .userName {
+    grid-column-start: 2;
+    justify-self: center;
+  }
+
+  .userEmail{
+    grid-column-start: 3;
+    justify-self: center;
+  }
+
+  .userEmailConf{
+    grid-column-start: 5;
+    justify-self: center;
+  }
+
+  .userStatus{
+    grid-column-start: 6;
+    justify-self: center;
+  }
+
+  .btnBlock{
+    grid-column-start: 7;
+    justify-self: center;
+  }
+}
