@@ -21,7 +21,7 @@ class UserService {
     async hasToken(userId){
         const user = await db.query(queries.hasToken, [userId])
         if (user.error) return null
-        return user.rows[0];
+        return user.rows[0].Value;
     }
     async blockUser(userId){
         const user = await db.query(queries.blockUser, [userId])

@@ -39,7 +39,7 @@ class AuthController {
             await userService.saveToken(user.Id, accessToken);
 
             return res.status(200).json({
-                accessToken: accessToken.Value,
+                accessToken: accessToken,
                 user: {
                     email: email,
                     password: password
