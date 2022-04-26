@@ -65,16 +65,23 @@ let webApp =
     choose [
         GET >=>
             choose [
-                route "/user" >=> UsersHandler //get user
-                routef "/user/%O" UserHandler // get all users
-                routef "/user/ban/%O" UserBanHandler // ban user
-                routef "/user/unban/%O" UserUnbanHandler // unban user
-                routef "/user/update/%O" UserUpdateHandler // 
-                routef "/user/delete/%O" UserDeleteHandler // delete user
+                route "/API/user" >=> UsersHandler //get user
+                routef "/API/user/%O" UserHandler // get all users
             ]
-            POST >=> route "/user" // add new user
+        POST >=>
+            choose [
+                 route "/API/user" >=> userAddHandler // add new user
+                 routef "/API/user/ban/%O" UserBanHandler // ban user
+                 routef "/API/user/unban/%O" UserUnbanHandler // unban user
+                 route "/API/user/update" >=> UserUpdateHandler // Update user
+            ]
+        DELETE >=>
+            choose [
+                routef "/API/user/delete/%O" UserDeleteHandler // delete user
+            ]
             
-            >=> userAddHandler
+            
+            
         setStatusCode 404 >=> text "Not Found" ]
 
 // ---------------------------------

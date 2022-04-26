@@ -28,8 +28,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Include="Data\User.fs" />
-      <Compile Include="Models\ApplicationContext.fs" />
+      <Compile Include="Models\User.fs" />
+      <Compile Include="Models\CreateUserRequest.fs" />
+      <Compile Include="Models\UpdateUserRequest.fs" />
+      <Compile Include="Data\ApplicationContext.fs" />
       <Compile Include="Handler.fs" />
       <Compile Include="Program.fs" />
     </ItemGroup>
