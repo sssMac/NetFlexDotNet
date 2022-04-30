@@ -29,6 +29,7 @@ export const login = (email, password) => {
             );
             dispatch(setUser(response.data.user))
             localStorage.setItem('token', response.data.accessToken)
+
         } catch (e) {
             alert(e);
         }
@@ -50,3 +51,36 @@ export const auth =  () => {
         }
     }
 }
+
+export const block =  (email) => {
+    return async dispatch => {
+        try {
+            const response = await axios.post("http://localhost:5000/auth/block",
+                {
+                    email,
+                },
+                {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
+            );
+            alert(response.data.user.email);
+        } catch (e) {
+            alert(e);
+        }
+    }
+}
+
+export const unblock =  (email) => {
+    return async dispatch => {
+        try {
+            const response = await axios.post("http://localhost:5000/auth/unblock",
+                {
+                    email,
+                },
+                {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
+            );
+            alert(response.data.user.email);
+        } catch (e) {
+            alert(e);
+        }
+    }
+}
+

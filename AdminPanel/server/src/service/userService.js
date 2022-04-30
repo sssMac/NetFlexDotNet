@@ -9,7 +9,7 @@ class UserService {
         return user.rows[0];
     }
     async save(userDTO){
-        const user = await db.query(queries.addUser, [userDTO.Id,userDTO.Email,userDTO.Password])
+        const user = await db.query(queries.addUser, [userDTO.Id,userDTO.Email,userDTO.Password,userDTO.UserName,userDTO.NormalizedUserName,userDTO.Avatar, userDTO.NormalizedEmail])
         if (user.error) return null
         await db.query(queries.addUserRole, [userDTO.Id,'2'])
         return user.rows[0];
@@ -21,7 +21,7 @@ class UserService {
     async hasToken(userId){
         const user = await db.query(queries.hasToken, [userId])
         if (user.error) return null
-        return user.rows[0];
+        return user.rows[0].Value;
     }
     async blockUser(userId){
         const user = await db.query(queries.blockUser, [userId])
@@ -32,6 +32,11 @@ class UserService {
         const user = await db.query(queries.unblockUser, [userId])
         if (user.error) return null
         return user.rows[0];
+    }
+    async allUsers(){
+        const result = await db.query(queries.allUsers)
+        if (result.error) return null
+        return result.rows;
     }
 }
 

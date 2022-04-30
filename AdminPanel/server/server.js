@@ -17,8 +17,9 @@ const port = 5000;
 // set routes..
 app.use("/series", seriesRouter);
 app.use("/auth", authRouter);
+app.use("/auth", authRouter);
 app.use("/roles", rolesRouter);
-app.use("/genre", genreRouter);
+app.use("/genre", genreRouter)
 
 // home handler
 app.get("/", (res, rep) => {

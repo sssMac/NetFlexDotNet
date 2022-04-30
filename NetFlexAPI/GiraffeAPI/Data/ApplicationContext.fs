@@ -25,15 +25,22 @@ type ApplicationContext(options : DbContextOptions<ApplicationContext>) =
 module UserRetository = 
 
     let getAll (context : ApplicationContext) = context.Users
+    
+    // DONE
     let getUser (context : ApplicationContext) id = context.Users |> Seq.tryFind (fun f -> f.Id = id)
+    
+    // DONE
     let addUserAsync (context : ApplicationContext) (entity : User) = 
-        task { 
-            context.Users.AddAsync(entity)
+        async {
+            context.Users.AddRangeAsync(entity)
+            |> Async.AwaitTask
             |> ignore
             let! result = context.SaveChangesAsync true |> Async.AwaitTask
             let result = if result >= 1  then Some(entity) else None
             return result
         }
+        
+        // DONE
     let updateUser (context : ApplicationContext) (entity : User) (id : Guid) = 
         let current = context.Users.Find(id)
         let updated = { entity with Id = id }
@@ -43,17 +50,21 @@ module UserRetository =
         let current = context.Users.Find(id)
         let deleted = { current with IsBanned = true }
         updateUser context deleted id
+        
+        //DONE
     let unbunUser (context : ApplicationContext) (id : Guid) = 
         let current = context.Users.Find(id)
         let banned = { current with IsBanned = false }
         updateUser context banned id
         
+        //DONE
+        
     let deleteUser (context:ApplicationContext) (id:Guid) =
         let current = context.Users.Find(id)
         context.Users.Remove(current)
-        if context.SaveChanges true >= 1  then Some(current) else None
+        if context.SaveChanges true  >= 1  then Some(current) else None
         
-
+        // DONE
 let getAll  = UserRetository.getAll 
 let getUser  = UserRetository.getUser
 let addUserAsync = UserRetository.addUserAsync
