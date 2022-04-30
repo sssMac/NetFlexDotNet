@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetFlexAPI.Models;
 
-namespace NetFlexAPI.Data;
-
-public class ApplicationContext : DbContext
+namespace NetFlexAPI.Data
 {
-    public DbSet<User> Users { get; set; }
- 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public class ApplicationContext : DbContext
     {
-        optionsBuilder.UseNpgsql("User ID=postgres; Server=localhost; port=5432; Database=NetFlexDb; Password=ALEXRED123321!@; Pooling=true;");
+        public DbSet<User> Users { get; set; }
+ 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql("User ID=username; Server=localhost; port=54321; Database=netflex; Password=password; Pooling=true;");
+        }
     }
 }

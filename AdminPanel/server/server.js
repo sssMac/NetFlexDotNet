@@ -4,6 +4,8 @@ const authRouter = require('./src/routes/authRouter')
 const rolesRouter = require('./src/routes/rolesRouter')
 const createError = require("./src/errors/createError");
 const corsMiddleware = require('./middleware/corsMiddleware')
+const genreRouter = require('./src/routes/genreRouter');
+
 const app = express();
 
 // middleware
@@ -16,7 +18,7 @@ const port = 5000;
 app.use("/series", seriesRouter);
 app.use("/auth", authRouter);
 app.use("/roles", rolesRouter);
-
+app.use("/genre", genreRouter);
 
 // home handler
 app.get("/", (res, rep) => {
