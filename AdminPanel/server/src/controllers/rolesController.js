@@ -4,6 +4,19 @@ const db = require("../database/db");
 const queries = require("../queries/rolesQueries");
 
 class RolesController {
+
+    async all(req,res,next){
+        try {
+            const results = await db.query(queries.allRoles)
+            if (results.error)
+                return next(new createError(401, results.error))
+            return res.status(200).json(results.rows)
+        }catch (e) {
+            return next(new createError(400, e.message))
+        }
+    }
+
+
     async createRole(req,res,next){
         try {
             const {roleId, roleName} = req.body

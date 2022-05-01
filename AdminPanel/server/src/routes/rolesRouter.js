@@ -10,4 +10,6 @@ router.post('/removeRole',verifyAdmin,rolesController.removeRoles)
 
 router.post('/assignRole',verifyAdmin,rolesController.assignRole)
 
+router.get('/all',verifyAdmin,rolesController.all)
+
 module.exports = router;

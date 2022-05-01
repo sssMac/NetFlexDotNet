@@ -29,9 +29,7 @@ const verifyToken = (req, res, next) => {
 
 async function verifyAdmin(req,res,next){
     const accessToken = req.headers.authorization.split(' ')[1]
-    console.log(accessToken)
 
-    // const accessToken = req.body.token || req.query.token || req.headers["access-token"];
 
     const results = await db.query(queries.getUserIdByToken, [accessToken]);
     if (results.error)
