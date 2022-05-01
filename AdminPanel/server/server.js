@@ -3,6 +3,7 @@ const seriesRouter = require("./src/routes/seriesRouter");
 const authRouter = require('./src/routes/authRouter')
 const rolesRouter = require('./src/routes/rolesRouter')
 const createError = require("./src/errors/createError");
+const userRouter = require('./src/routes/userRouter')
 const corsMiddleware = require('./middleware/corsMiddleware')
 const genreRouter = require('./src/routes/genreRouter');
 
@@ -20,6 +21,7 @@ app.use("/auth", authRouter);
 app.use("/auth", authRouter);
 app.use("/roles", rolesRouter);
 app.use("/genre", genreRouter)
+app.use("/user", userRouter);
 
 // home handler
 app.get("/", (res, rep) => {
