@@ -1,14 +1,21 @@
 import React, {useState} from 'react';
 import './RegLog.scss'
-import Input from "../../utils/input/Input";
+import Input from "../../../utils/input/Input";
 import {NavLink} from "react-router-dom";
-import {login} from "../../actions/user";
+import {login} from "../../../actions/user";
 import {useDispatch} from "react-redux";
+import {logout} from "../../../reducers/userReducer";
 
 const Login = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const dispatch = useDispatch()
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+
+        dispatch(login(email,password))
+    }
 
     return (
         <div className="RegLog">
@@ -24,7 +31,7 @@ const Login = () => {
 
                 </div>
 
-                <button className="registration__btn" onClick={ ()=> dispatch(login(email,password))} >Sign In</button>
+                <button className="registration__btn" onClick={ (e)=> handleLogin(e)} >Sign In</button>
 
                 <div className="otherInfo">Do you want to register   <NavLink to="/SignUp">Sign Up</NavLink></div>
             </div>

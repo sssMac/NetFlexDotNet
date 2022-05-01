@@ -46,7 +46,7 @@ export const auth =  () => {
 
             localStorage.setItem('token', response.data.accessToken)
         } catch (e) {
-            alert(e.response.data.message)
+            console.log(e.response.data.message)
             localStorage.removeItem('token')
         }
     }
@@ -61,7 +61,7 @@ export const block =  (email) => {
                 },
                 {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
             );
-            alert(response.data.user.email);
+
         } catch (e) {
             alert(e);
         }
@@ -77,7 +77,6 @@ export const unblock =  (email) => {
                 },
                 {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
             );
-            alert(response.data.user.email);
         } catch (e) {
             alert(e);
         }

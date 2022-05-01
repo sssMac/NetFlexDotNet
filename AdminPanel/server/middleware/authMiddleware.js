@@ -13,7 +13,8 @@ const verifyToken = (req, res, next) => {
 
     try {
         const accessToken = req.headers.authorization.split(' ')[1]
-        if (!token) {
+        if (!accessToken) {
+            return res.status(401).json({message: 'Auth error'})
         }
         const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
         console.log(decoded)
@@ -22,12 +23,13 @@ const verifyToken = (req, res, next) => {
 
         next()
     } catch (e) {
+        return res.status(401).json({message: 'Auth error'})
     }
 };
 
 async function verifyAdmin(req,res,next){
     const accessToken = req.headers.authorization.split(' ')[1]
-    // const accessToken = req.body.token || req.query.token || req.headers["access-token"];
+
 
     const results = await db.query(queries.getUserIdByToken, [accessToken]);
     if (results.error)

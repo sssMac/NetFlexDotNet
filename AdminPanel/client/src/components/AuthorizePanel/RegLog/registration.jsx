@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import './RegLog.scss'
-import Input from "../../utils/input/Input";
+import Input from "../../../utils/input/Input";
 import {NavLink} from "react-router-dom";
-import {registration} from "../../actions/user";
+import {registration} from "../../../actions/user";
 
 const Registration = () => {
     const [email, setEmail] = useState("")
