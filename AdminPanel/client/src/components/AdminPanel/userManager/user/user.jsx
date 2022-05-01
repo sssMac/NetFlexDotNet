@@ -1,23 +1,48 @@
 import React from 'react';
-import './user.scss'
-import userIcon from '../../../../assets/img/userIcon.png'
 import {useDispatch} from "react-redux";
 import {block, unblock} from "../../../../actions/user";
 
 const User = ({user}) => {
     const dispatch = useDispatch()
-
+    console.log(user.EmailConfirmed)
+    const emailCong = String(user.EmailConfirmed)
     return (
-        <div className='user'>
-            <img src={userIcon} alt="" className="userIcon"/>
-            <div className="userName">{user.Name}</div>
-            <div className="userEmail">{user.Email}</div>
-            <div className="userEmailConf">{user.EmailConfirmed}</div>
-            <div className="userStatus">{user.Status}</div>
+        <tr>
+            <td className="avatar">
+                <div className="avatar">
+                    <img
+                        src={user.Avatar}/>
+                </div>
+            </td>
+            <td>
+                <div className="text-primary color-light">{user.UserName}</div>
+                <div className="text-secondary">{user.Email}</div>
+            </td>
+            <td>
+                <div className="text-primary color-light">{emailCong}</div>
+            </td>
+            <td>
+                {
+                    user.Status === "access" ?
+                        <div className="text-primary color-green">{user.Status}</div>
 
-            <button className="btnBlock" onClick={() => dispatch(block(user.Email))}>Block</button>
-            <button className="btnBlock" onClick={() => dispatch(unblock(user.Email))}>UnblocK</button>
-        </div>
+                        :
+                        <div className="text-primary color-danger">{user.Status}</div>
+
+                }
+            </td>
+            <td>
+                {
+                    user.Status === "access" ?
+                    <button className="button dark color-light" onClick={() => dispatch(block(user.Email))}>Block
+                    </button>
+                        :
+                    <button className="button dark color-light" onClick={() => dispatch(unblock(user.Email))}>Unblock
+                    </button>
+                }
+
+            </td>
+        </tr>
     );
 };
 
