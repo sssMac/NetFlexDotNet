@@ -25,7 +25,7 @@ class AuthController {
                 return next(new createError(400, `User with email ${email} already exist`))
 
             const hashPassword = await bcrypt.hash(password, 8)
-            const userName = email.split(' ')[0];
+            const userName = email.split('@')[0];
             const normalizedUserName = userName.normalize();
             const normalizedEmail = email.normalize();
             const Avatar = "https://raw.githubusercontent.com/1dxrpz/video-player-test-js/main/Netflix%20icon.svg"
@@ -71,11 +71,8 @@ class AuthController {
                 accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
 
             return res.status(200).json({
-                accessToken,
-                user: {
-                    email: email,
-                    password: password
-                }
+                accessToken: accessToken,
+                user: user,
             })
 
         } catch (e) {
@@ -90,11 +87,9 @@ class AuthController {
 
             const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "1h"})
 
-            console.log(accessToken)
-
             return res.status(200).json({
-                accessToken,
-                user
+                accessToken: accessToken,
+                user : user,
             })
         } catch (e) {
             console.log(e)
