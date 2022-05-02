@@ -28,6 +28,7 @@ const verifyToken = (req, res, next) => {
 };
 
 async function verifyAdmin(req,res,next){
+    try {
     const accessToken = req.headers.authorization.split(' ')[1]
 
 
@@ -47,7 +48,9 @@ async function verifyAdmin(req,res,next){
         if (roleName !== "Admin")
             return next(new createError(401,"This is for administrators only !!"))
     }
-    next()
+    next() } catch (e) {
+        return res.status(401).json({message: 'Auth error'})
+    }
 }
 module.exports = {
     verifyToken,
