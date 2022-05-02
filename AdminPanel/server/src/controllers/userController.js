@@ -18,7 +18,6 @@ class AuthController {
                     .setId(u.Id)
                     .setEmail(u.Email)
                     .setUserName(u.UserName)
-                    .setUserName(u.UserName)
                     .setAvatar(u.Avatar)
                     .setEmailConfirmed(u.EmailConfirmed)
                     .setStatus(u.Status)
