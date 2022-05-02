@@ -1,5 +1,7 @@
 const db = require("../database/db");
 const queries = require("../queries/userQueries");
+const createError = require("../errors/createError");
+const roleDto = require("../models/roleDTO")
 
 class UserService {
     async findOne(email){
@@ -38,6 +40,18 @@ class UserService {
         if (result.error) return null
         return result.rows;
     }
+    async getRole(userId){
+        const results = await db.query(queries.getUserRole, [userId])
+        if (results.error)
+            return null
+        return results.rows.map(r => {
+            return new roleDto(
+                r.Id,
+                r.Name
+            )
+        })
+    }
+
 }
 
 module.exports = new UserService();

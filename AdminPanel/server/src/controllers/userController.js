@@ -11,15 +11,22 @@ class AuthController {
             if (!allUsers)
                 return next(new createError(400, `not found users!!`))
 
-            return res.status(200).json(allUsers.map(u => {
-                return new userDto(
-                    u.Id,
-                    u.Email,
-                    u.UserName,
-                    u.Avatar,
-                    u.EmailConfirmed,
-                    u.Status)
-            }))
+            let usersDto = []
+
+            for (const u of allUsers) {
+                usersDto.push(new userDto()
+                    .setId(u.Id)
+                    .setEmail(u.Email)
+                    .setUserName(u.UserName)
+                    .setUserName(u.UserName)
+                    .setAvatar(u.Avatar)
+                    .setEmailConfirmed(u.EmailConfirmed)
+                    .setStatus(u.Status)
+                    .setRoles(await userService.getRole(u.Id))
+                )
+            }
+
+            return res.status(200).json(usersDto)
 
         } catch (e) {
             console.log(e)

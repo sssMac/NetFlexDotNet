@@ -10,6 +10,7 @@ const blockUser = 'update "AspNetUsers" set "Status" = \'blocked\' where "Id" = 
 const unblockUser = 'update "AspNetUsers" set "Status" = \'access\' where "Id" = $1;';
 const isBlocked = 'select "LoginProvider" from "AspNetUserTokens" where "UserId" = $1';
 const allUsers = 'select * from "AspNetUsers"';
+const getUserRole = 'select "Id", "Name" from "AspNetRoles" join "AspNetUserRoles" ANRC on "AspNetRoles"."Id" = ANRC."RoleId" where "UserId" = $1';
 module.exports = {
     getUserIdByToken,
     getRoleName,
@@ -21,5 +22,6 @@ module.exports = {
     blockUser,
     unblockUser,
     isBlocked,
-    allUsers
+    allUsers,
+    getUserRole
 };
