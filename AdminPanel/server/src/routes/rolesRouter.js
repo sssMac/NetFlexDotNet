@@ -12,4 +12,6 @@ router.post('/assignRole',verifyAdmin,rolesController.assignRole)
 
 router.get('/all',verifyAdmin,rolesController.all)
 
+router.post('/getRole',verifyAdmin,rolesController.getRole)
+
 module.exports = router;
