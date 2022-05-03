@@ -60,7 +60,8 @@ class RolesController {
 
     async getRole(req,res,next){
         try {
-            const {userId} = req.body
+            console.log(req)
+            const {userId} = req.head
             const results = await db.query(queries.getUserRole, [userId])
             if (results.error)
                 return next(new createError(401, "Not found roles!!"))

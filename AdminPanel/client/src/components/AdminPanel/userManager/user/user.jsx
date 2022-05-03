@@ -1,11 +1,33 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useDispatch} from "react-redux";
 import {block, unblock} from "../../../../actions/user";
+import axios from "axios";
+import './CustomSelect.scss'
+import Select from "react-select";
+import {assignRole} from "../../../../actions/role";
 
-const User = ({user}) => {
+const User = ({user, roles}) => {
+    const [currentRole, setCurrentRole] = useState(user.Roles[0].Name)
     const dispatch = useDispatch()
-    console.log(user.EmailConfirmed)
     const emailCong = String(user.EmailConfirmed)
+
+    const options = []
+
+    roles.map(r => options.push({
+        value: r.Name,
+        label: r.Name
+    }))
+
+
+
+    const onChange = (newRole) => {
+        setCurrentRole(newRole)
+        assignRole(user.Id, roles.find(r => r.Name === newRole.value).Id).then(r => r)
+    }
+    const getRole = () => {
+        return currentRole ? options.find(r => r.value === currentRole) : ''
+    }
+
     return (
         <tr>
             <td className="avatar">
@@ -17,6 +39,10 @@ const User = ({user}) => {
             <td>
                 <div className="text-primary color-light">{user.UserName}</div>
                 <div className="text-secondary">{user.Email}</div>
+            </td>
+            <td>
+                <Select classNamePrefix='custom-select' onChange={onChange} value={getRole()} options={options}/>
+                <div className="text-secondary">{user.Roles[0].Name}</div>
             </td>
             <td>
                 <div className="text-primary color-light">{emailCong}</div>
