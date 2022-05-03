@@ -4,6 +4,7 @@ const removeRoles = 'delete from "AspNetRoles" where "Id" = $1';
 const addRoleToUser = 'update "AspNetUserRoles" set "RoleId" = $2 where "UserId" = $1';
 const allRoles = 'select "Id","Name" from "AspNetRoles"';
 const getUserRole = 'select "Id", "Name" from "AspNetRoles" join "AspNetUserRoles" ANRC on "AspNetRoles"."Id" = ANRC."RoleId" where "UserId" = $1';
+const setToUserRole = 'update "AspNetUserRoles" set "RoleId" = \'2\' where "RoleId" = $1';
 
 
 
@@ -12,5 +13,6 @@ module.exports = {
   removeRoles,
   addRoleToUser,
   allRoles,
-  getUserRole
+  getUserRole,
+  setToUserRole
 };

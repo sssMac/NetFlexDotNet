@@ -34,6 +34,11 @@ class RolesController {
     async removeRoles(req,res,next){
         try {
             const {roleId} = req.body
+
+            const ch = await db.query(queries.setToUserRole, [roleId])
+            if (ch.error)
+                return next(new createError(401, ch.error))
+
             const results = await db.query(queries.removeRoles, [roleId])
             if (results.error)
                 return next(new createError(401, results.error))
