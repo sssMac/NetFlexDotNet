@@ -6,6 +6,7 @@ const createError = require("./src/errors/createError");
 const userRouter = require('./src/routes/userRouter')
 const corsMiddleware = require('./middleware/corsMiddleware')
 const genreRouter = require('./src/routes/genreRouter');
+const reviewRouter = require('./src/routes/reviewRouter');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/auth", authRouter);
 app.use("/roles", rolesRouter);
 app.use("/user", userRouter);
 app.use("/genre", genreRouter);
+app.use("/review", reviewRouter);
 
 // home handler
 app.get("/", (res, rep) => {
