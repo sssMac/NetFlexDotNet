@@ -27,7 +27,6 @@ class ReviewController {
         const Rating = req.body.Rating
         const PublishTime = new Date()
 
-        console.log(Id, UserName, ContentId, Text, Rating, PublishTime)
 
         const result = await db.query(queries.push, [Id, UserName, ContentId, Text, Rating, PublishTime])
         if (result.error)
