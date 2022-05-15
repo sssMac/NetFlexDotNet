@@ -65,19 +65,30 @@ let webApp =
     choose [
         GET >=>
             choose [
-                route "/API/user" >=> UsersHandler //get user
-                routef "/API/user/%O" UserHandler // get all users
+                // USERS
+                route "/API/user" >=> UsersHandler //get user ok
+                routef "/API/user/%O" UserHandler // get all users ok                
+                routef "/API/user/ban/%O" UserBanHandler // ban user  ok
+                routef "/API/user/unban/%O" UserUnbanHandler // unban user ok
+                // ROLES
+                route "/API/role" >=> RolesHandler //get all roles ok
+                routef "/API/role/%O" RoleHandler //get role ok    
             ]
         POST >=>
             choose [
-                 route "/API/user" >=> userAddHandler // add new user
-                 routef "/API/user/ban/%O" UserBanHandler // ban user
-                 routef "/API/user/unban/%O" UserUnbanHandler // unban user
-                 route "/API/user/update" >=> UserUpdateHandler // Update user
+                 // USERS
+                 route "/API/user" >=> userAddHandler // add new user ok
+                 route "/API/user/update" >=> UserUpdateHandler // Update user ok
+                 //ROLES
+                 route "/API/role" >=> RoleAddHandler // add new role ok
+                 route "/API/role/update" >=> RoleUpdateHandler // update role ok
             ]
         DELETE >=>
             choose [
-                routef "/API/user/delete/%O" UserDeleteHandler // delete user
+                // USERS
+                routef "/API/user/delete/%O" UserDeleteHandler // delete user ok
+                //ROLES
+                routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok
             ]
             
             
