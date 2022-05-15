@@ -6,6 +6,8 @@ namespace NetFlexAPI.Data;
 public class ApplicationContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
  
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
