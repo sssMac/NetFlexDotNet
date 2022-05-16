@@ -30,7 +30,9 @@
     <ItemGroup>
       <Compile Include="Models\User.fs" />
       <Compile Include="Models\CreateUserRequest.fs" />
-      <Compile Include="Models\UpdateUserRequest.fs" />
+      <Compile Include="Models\UserRole.fs" />
+      <Compile Include="Models\Role.fs" />
+      <Compile Include="Models\CreateRole.fs" />
       <Compile Include="Data\ApplicationContext.fs" />
       <Compile Include="Handler.fs" />
       <Compile Include="Program.fs" />
