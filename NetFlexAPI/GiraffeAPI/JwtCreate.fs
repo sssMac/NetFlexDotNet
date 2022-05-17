@@ -15,11 +15,11 @@ let requireAdminRole : HttpHandler =
    
 let authenticate : HttpHandler =
     requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme >=> text "please authenticate")
-let generateToken email =
+let generateToken role =
     let claims = [|
-        Claim(JwtRegisteredClaimNames.Sub, email);
+        Claim(JwtRegisteredClaimNames.Sub, role);
         Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        new Claim(ClaimTypes.Role, email) |]
+        new Claim(ClaimTypes.Role, role) |]
 
     let expires = Nullable(DateTime.UtcNow.AddHours(1.0))
     let notBefore = Nullable(DateTime.UtcNow)
