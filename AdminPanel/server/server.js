@@ -1,11 +1,12 @@
 const express = require("express");
-const seriesRouter = require("./src/routes/seriesRouter");
+
 const authRouter = require('./src/routes/authRouter')
 const rolesRouter = require('./src/routes/rolesRouter')
 const createError = require("./src/errors/createError");
 const userRouter = require('./src/routes/userRouter')
 const corsMiddleware = require('./middleware/corsMiddleware')
 const genreRouter = require('./src/routes/genreRouter');
+const seriesRouter = require('./src/routes/seriesRouter');
 const reviewRouter = require('./src/routes/reviewRouter');
 
 const app = express();
@@ -17,12 +18,13 @@ app.use(express.json());
 const port = 5000;
 
 // set routes..
-app.use("/series", seriesRouter);
+
 app.use("/auth", authRouter);
 app.use("/roles", rolesRouter);
 app.use("/user", userRouter);
 app.use("/genre", genreRouter);
 app.use("/review", reviewRouter);
+app.use("/series", seriesRouter);
 
 // home handler
 app.get("/", (res, rep) => {
