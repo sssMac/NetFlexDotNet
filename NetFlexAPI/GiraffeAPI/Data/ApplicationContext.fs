@@ -7,6 +7,7 @@ open GiraffeAPI.Models
 open GiraffeAPI.Models.User
 open GiraffeAPI.Models.UserRole
 open GiraffeAPI.Models.Role
+open GiraffeAPI.Models.UserAuth
 open Microsoft.EntityFrameworkCore
 open System.Linq
 
@@ -16,6 +17,8 @@ type ApplicationContext(options : DbContextOptions<ApplicationContext>) =
             override __.OnModelCreating modelBuilder = 
                 let expr =  modelBuilder.Entity<User>().HasKey(fun user -> (user.Id) :> obj) 
                 modelBuilder.Entity<User>().Property(fun user -> user.Id).ValueGeneratedOnAdd() |> ignore
+                
+            
           
         [<DefaultValue>]
         val mutable users:DbSet<User>
@@ -89,6 +92,30 @@ module UserRetository =
         
         // DONE
         
+    let userAuth (context : ApplicationContext) (entity : UserAuth) =
+        async {
+            let current =
+                query {
+                    for serie in context.Users do
+                        find (serie.Email.Equals (entity.Email))
+                }
+            let result =
+                if current.PasswordHash = entity.PasswordHash then
+                    let userId = current.Id
+                    let currentRoleId = context.UserRoles.Find(userId)
+                    let currentRole = context.Roles.Find(currentRoleId.RoleId)
+                    let role = currentRole.RoleName
+                    Some(role)    
+                else None
+            return result
+        }
+        
+        
+        
+        
+        
+        
+        
 module RoleRetository =
     let getAllRoles (context : ApplicationContext) = context.roles
     
@@ -131,7 +158,7 @@ let updateUser = UserRetository.updateUser
 let banUser = UserRetository.banUser
 let unbunUser = UserRetository.unbunUser
 let deleteUser = UserRetository.deleteUser
-
+let userAuth = UserRetository.userAuth
 
 let getAllRoles = RoleRetository.getAllRoles
 let getRole = RoleRetository.getRole
