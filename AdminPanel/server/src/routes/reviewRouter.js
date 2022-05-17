@@ -29,4 +29,8 @@ router.post('/reject'
     , check('Id').exists().isUUID(),
     reviewController.reject)
 
+router.post('/pending'
+    , check('Id').exists().isUUID(),
+    reviewController.pending)
+
 module.exports = router;
