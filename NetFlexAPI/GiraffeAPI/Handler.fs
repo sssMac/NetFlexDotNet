@@ -7,7 +7,9 @@ open GiraffeAPI.Models.User
 open GiraffeAPI.Models.CreateUserRequest
 open GiraffeAPI.Models.Role
 open GiraffeAPI.Models.CreateRole
+open GiraffeAPI.Models.UserAuth
 open Microsoft.AspNetCore.Http
+open GiraffeAPI.JwtCreate
 open Giraffe
 open ApplicationContext
 
@@ -131,4 +133,19 @@ let RoleUpdateHandler : HttpHandler =
                 return! updateRole context role role.RoleId |> function 
                         | Some l -> ctx.WriteJsonAsync l
                         | None -> (setStatusCode 400 >=> json "Role not updated") next ctx
+        }
+        
+let AuthHandler : HttpHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task {
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! user = ctx.BindJsonAsync<UserAuth>()
+            match user.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! userAuth context user
+                        |> Async.RunSynchronously
+                        |> function
+                        | Some l -> ctx.WriteJsonAsync (generateToken l)
+                        | None -> (setStatusCode 400 >=> json "Auth is faild") next ctx
         }
