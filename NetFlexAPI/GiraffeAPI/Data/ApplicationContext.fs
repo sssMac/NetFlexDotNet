@@ -8,6 +8,7 @@ open GiraffeAPI.Models.User
 open GiraffeAPI.Models.UserRole
 open GiraffeAPI.Models.Role
 open GiraffeAPI.Models.UserAuth
+open GiraffeAPI.Models.Subscription
 open Microsoft.EntityFrameworkCore
 open System.Linq
 
@@ -25,6 +26,14 @@ type ApplicationContext(options : DbContextOptions<ApplicationContext>) =
         member x.Users 
             with get() = x.users 
             and set v = x.users <- v
+            
+            
+        [<DefaultValue>]
+        val mutable subscriptions:DbSet<Subscription>
+        member x.Subscriptions 
+            with get() = x.subscriptions 
+            and set v = x.subscriptions <- v
+            
             
         [<DefaultValue>]
         val mutable userroles:DbSet<UserRole>
@@ -145,11 +154,44 @@ module RoleRetository =
     let updateRole (context : ApplicationContext) (entity : Role) (id : Guid) = 
         let current = context.Roles.Find(id)
         let updated = { entity with RoleId = id }
-        if current.RoleId = Guid.Parse("37050332-97c2-4fb9-a9cd-97b5c86b35d6") then None
+        context.Entry(current).CurrentValues.SetValues(updated)
+        if context.SaveChanges true >= 1  then Some(updated) else None
+        
+    let updateUserRole (context : ApplicationContext) (entity : UserRole) (id : Guid) = 
+        let current = context.UserRoles.Find(id)
+        let updated = { entity with UserId = id }
+        context.Entry(current).CurrentValues.SetValues(updated)
+        if context.SaveChanges true >= 1  then Some(updated) else None
+
+module SubscriptionsRepository =
+    let getSub (context : ApplicationContext) (id : Guid) = context.Subscriptions |> Seq.tryFind (fun f -> f.Id = id)
+    
+    let getAllSub (context : ApplicationContext) = context.Subscriptions
+    
+    let addSubAsync (context : ApplicationContext) (entity : Subscription) = 
+        async {
+            context.Subscriptions.AddRangeAsync(entity)
+            |> Async.AwaitTask
+            |> ignore
+            let! result = context.SaveChangesAsync true |> Async.AwaitTask
+            let result = if result >= 1  then Some(entity) else None
+            return result
+        }
+        
+    let updateSub (context : ApplicationContext) (entity : Subscription) (id : Guid) = 
+        let current = context.Subscriptions.Find(id)
+        let updated = { entity with Id = id }
+        if current.Id = Guid.Parse("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1") then None
         else
         context.Entry(current).CurrentValues.SetValues(updated)
         if context.SaveChanges true >= 1  then Some(updated) else None
         
+    let deleteSub (context:ApplicationContext) (id:Guid) =
+        let current = context.Subscriptions.Find(id)
+        if current.Id = Guid.Parse("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1") then None
+        else
+        context.Subscriptions.Remove(current)
+        if context.SaveChanges true  >= 1  then Some(current) else None
         
 let getAll  = UserRetository.getAll 
 let getUser  = UserRetository.getUser
@@ -164,9 +206,11 @@ let getAllRoles = RoleRetository.getAllRoles
 let getRole = RoleRetository.getRole
 let addRoleAsync = RoleRetository.addRoleAsync
 let deleteRole = RoleRetository.deleteRole
-let updateRole = RoleRetository.updateRole   
+let updateRole = RoleRetository.updateRole
+let updateUserRole = RoleRetository.updateUserRole
           
-        
-                                           
-        
-        
+let getSub = SubscriptionsRepository.getSub
+let getAllSub = SubscriptionsRepository.getAllSub
+let addSubAsync = SubscriptionsRepository.addSubAsync
+let updateSub = SubscriptionsRepository.updateSub
+let deleteSub = SubscriptionsRepository.deleteSub

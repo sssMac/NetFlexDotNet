@@ -71,25 +71,33 @@ let webApp =
     choose [
         GET >=>
             choose [
-                // USERS
                 requireAdminRole >=> choose[
+                    // USERS
                     routef "/API/user/%O" UserHandler // get users by id ok   TESTED 
                     routef "/API/user/ban/%O" UserBanHandler // ban user  ok TESTED
                     routef "/API/user/unban/%O" UserUnbanHandler // unban user ok TESTED
                     route "/API/user" >=> UsersHandler //get all users ok
+                    // ROLES
                     route "/API/role" >=> RolesHandler //get all roles ok
-                    routef "/API/role/%O" RoleHandler //get role ok   TESTED 
+                    routef "/API/role/%O" RoleHandler //get role ok   TESTED
+                    // SUBSCRIPIONS
+                    route "/API/sub" >=> SubsHandler //get all subscription ok 
+                    routef "/API/sub/%O" SubHandler //get subscription ok   TESTED
                 ]
             ]
         POST >=>
             choose [
                  requireAdminRole >=> choose[
                      // USERS
-                     route "/API/user" >=>  userAddHandler
-                     route "/API/user/update" >=>   UserUpdateHandler
+                     route "/API/user" >=>  userAddHandler  // add new user ok TESTED
+                     route "/API/user/update" >=>   UserUpdateHandler // update user ok TESTED
                      //ROLES
                      route "/API/role" >=>  RoleAddHandler // add new role ok TESTED
                      route "/API/role/update" >=>  RoleUpdateHandler  // update role ok TESTED
+                     route "/API/userrole/update" >=>  UserRoleUpdateHandler  // update userrole ok TESTED
+                     // SUBSCRIPIONS
+                     route "/API/sub" >=>  SubAddHandler // add new subscription ok TESTED
+                     route "/API/sub/update" >=>  SubUpdateHandler  // update subscription ok TESTED
                  ]
                  route "/API/user/auth" >=> AuthHandler // Auth TESTED
                  
@@ -98,9 +106,11 @@ let webApp =
             choose [
                 requireAdminRole >=> choose[
                     // USERS
-                    routef "/API/user/delete/%O" UserDeleteHandler // delete user ok
+                    routef "/API/user/delete/%O" UserDeleteHandler // delete user ok TESTED
                     //ROLES
-                    routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok
+                    routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok TESTED
+                    // SUBSCRIPTIONS
+                    routef "/API/sub/delete/%O" SubDeleteHandler // delete subscription ok TESTED
                 ]
             ]
             

@@ -209,9 +209,8 @@ public class UnitTest2
         }
 
         [Theory]
-        [InlineData("57050332-97c2-4fb9-a9cd-97b5c86b35d6", "Redactor1", null)]
-        [InlineData("57050332-97c2-4fb9-a9cd-97b5c86b35d6", "Redactor", null)]
-        public async Task UpdateRole(Guid RoleId, string RoleName, string expected)
+        [InlineData("d586e9ee-1703-44ec-826c-39cbb700d420", "Redactor1", null)]
+        public async Task ZUpdateRole(Guid RoleId, string RoleName, string expected)
         {
             var role = new Role(RoleId, RoleName);
             string stringjson = JsonConvert.SerializeObject(role);
@@ -283,6 +282,106 @@ public class UnitTest2
             var actual = await response.Content.ReadAsStringAsync();
             actual = actual.Trim('"');
             Assert.Equal(expected, actual);
+        }
+        
+        [Theory]
+        [InlineData("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1", "Standart")]
+        public async Task GetSubscriptionById(Guid val1, string expected)
+        {
+            var response = await _client.GetAsync($"/API/sub/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.name);
+        }
+        
+        [Theory]
+        [InlineData("Student","200", null)]
+        public async Task CreateSub(string name,string price, string expected)
+        {
+            var sub = new CreateSubscription(name,price);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/sub", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.hasErrors);
+        }
+        
+        [Theory]
+        [InlineData("d481d149-60d1-4853-96e1-32c8e9655171", "Students","300", null)]
+        [InlineData("d481d149-60d1-4853-96e1-32c8e9655171", "Students", "200",null)]
+        public async Task UpdateSubscription(Guid id, string name,string price, string expected)
+        {
+            var sub = new Subscription(id,name, price);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/sub/update", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.hasErrors);
+        }
+        
+        [Theory]
+        [InlineData("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1", "Standart","300", "Subscription not updated")]
+        [InlineData("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1", "Standart", "200","Subscription not updated")]
+        public async Task WrongUpdateSubscription(Guid id, string name,string price, string expected)
+        {
+            var sub = new Subscription(id,name, price);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/sub/update", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            actual = actual.Trim('"');
+            Assert.Equal(expected, actual);
+        }
+        
+        [Theory]
+        [InlineData("d481d149-60d1-4853-96e1-32c8e9655171", "Students")]
+        public async Task DeleteSubscriptionById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/sub/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.name);
+        }
+        
+        [Theory]
+        [InlineData("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1", "Subscription not deleted")]
+        public async Task WrongDeleteSubscriptionById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/sub/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            actual = actual.Trim('"');
+            Assert.Equal(expected, actual);
+        }
+        
+        [Theory]
+        [InlineData("93d3cb87-1446-4c48-9ce2-e70ef629ec43", "47050332-97c2-4fb9-a9cd-97b5c86b35d6", "47050332-97c2-4fb9-a9cd-97b5c86b35d6")]
+        public async Task UpdateUserRole(Guid userId, Guid roleId, string expected)
+        {
+            var sub = new UserRole(userId,roleId);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/userrole/update", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.roleId);
+        }
+        
+        [Theory]
+        [InlineData("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1", "Redactor")]
+        public async Task DeleteRoleById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/role/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.roleName);
+        }
+        
+        [Theory]
+        [InlineData("55b4126a-d7a8-4d26-833c-303898f13018", "Ilya@gmail.com")]
+        public async Task DeleteUserById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/user/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.email);
         }
         
     }
