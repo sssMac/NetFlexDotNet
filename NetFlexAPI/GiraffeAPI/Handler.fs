@@ -8,6 +8,9 @@ open GiraffeAPI.Models.CreateUserRequest
 open GiraffeAPI.Models.Role
 open GiraffeAPI.Models.CreateRole
 open GiraffeAPI.Models.UserAuth
+open GiraffeAPI.Models.CreateSubscription
+open GiraffeAPI.Models.Subscription
+open GiraffeAPI.Models.UserRole
 open Microsoft.AspNetCore.Http
 open GiraffeAPI.JwtCreate
 open Giraffe
@@ -148,4 +151,63 @@ let AuthHandler : HttpHandler =
                         |> function
                         | Some l -> ctx.WriteJsonAsync (generateToken l)
                         | None -> (setStatusCode 400 >=> json "Auth is faild") next ctx
+        }
+        
+        
+let SubHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        getSub context id |> function
+            | Some l -> ctx.WriteJsonAsync l
+            | None -> (setStatusCode 404 >=> json "Subscription not find") next ctx
+            
+let SubsHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            getAllSub context |> ctx.WriteJsonAsync
+            
+            
+let SubAddHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! sub = ctx.BindJsonAsync<CreateSubscription>()
+            match sub.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addSubAsync context sub.GetSubscription
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "Subscription with this name made") next ctx
+                        }
+        
+let SubUpdateHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! sub = ctx.BindJsonAsync<Subscription>()
+            match sub.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! updateSub context sub sub.Id |> function 
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "Subscription not updated") next ctx
+        }
+        
+let SubDeleteHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        deleteSub context id |> function
+        | Some l -> ctx.WriteJsonAsync l
+        | None -> (setStatusCode 404 >=> json "Subscription not deleted") next ctx
+        
+let UserRoleUpdateHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! userRole = ctx.BindJsonAsync<UserRole>()
+            return! updateUserRole context userRole userRole.UserId |> function
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "Role not updated") next ctx
         }
