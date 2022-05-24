@@ -67,7 +67,7 @@ public class UnitTest1
         
         
         [Theory]
-        [InlineData("f92ac032-4341-4845-99c7-6dc2ed8a9624","lkl")]
+        [InlineData("f92ac032-4341-4845-99c7-6dc2ed8a9624","Alexey@gmail.com")]
         public async Task GetUserByIdOK(Guid val1, string expected)
         {
             var response = await _client.GetAsync($"/API/user/{val1}");
@@ -156,8 +156,8 @@ public class UnitTest1
         }
         
         [Theory]
-        [InlineData("8a23aa6c-1a78-4628-9dfa-e7c69e3f02c2","POP",null)]
-        [InlineData("8a23aa6c-1a78-4628-9dfa-e7c69e3f02c2","Redactor",null)]
+        [InlineData("f92ac032-4341-4845-99c7-6dc2ed8a9624","POP",null)]
+        [InlineData("f92ac032-4341-4845-99c7-6dc2ed8a9624","Redactor",null)]
         public async Task UpdateRole(Guid RoleId,string RoleName,string expected)
         {
             var role = new Role(RoleId, RoleName);
@@ -182,7 +182,7 @@ public class UnitTest1
         }
         
         [Theory]
-        [InlineData("kek","lol","Auth is faild")]
+        [InlineData("Alexey@gmail.com","123321","Auth is faild")]
         public async Task Auth(string email,string password,string expected)
         {
             var user = new UserAuth(email, password);
@@ -205,32 +205,32 @@ public class UnitTest1
             Assert.Equal(expected, (string)jsonObject.hasErrors);
         }
         
-        [Theory]
-        [InlineData("ff520269-78f3-4c6a-898f-c778968dce41","lol","POP","POP","POP","POP",false,"POP",false,null)]
-        [InlineData("ff520269-78f3-4c6a-898f-c778968dce41","POP","POP","POP","POP","POP",false,"POP",false,null)]
-        public async Task UpdateUser(Guid Id,string avatar,string userName,string normalizedUserName,string email, string normalizedEmail,bool emailConfirmed,
-            string passwordHash,bool isBanned,string expected)
-        {
-            var user = new User(Id,avatar,userName,normalizedUserName,email,normalizedEmail,emailConfirmed,passwordHash,isBanned);
-            string stringjson = JsonConvert.SerializeObject(user);
-            var response = await _client.PostAsync("/API/user/update", new StringContent(stringjson));
-            var actual = await response.Content.ReadAsStringAsync();
-            dynamic jsonObject = JObject.Parse(actual);
-            Assert.Equal(expected, (string)jsonObject.hasErrors);
-        }
-        
-        [Theory]
-        [InlineData("ff520269-78f3-4c6a-898f-c778968dce41","POP","POP","POP","POP","POP",false,"POP",false,"User not updated")]
-        public async Task UpdateUserWrong(Guid Id,string avatar,string userName,string normalizedUserName,string email, string normalizedEmail,bool emailConfirmed,
-            string passwordHash,bool isBanned,string expected)
-        {
-            var user = new User(Id,avatar,userName,normalizedUserName,email,normalizedEmail,emailConfirmed,passwordHash,isBanned);
-            string stringjson = JsonConvert.SerializeObject(user);
-            var response = await _client.PostAsync("/API/user/update", new StringContent(stringjson));
-            var actual = await response.Content.ReadAsStringAsync();
-            actual = actual.Trim('"');
-            Assert.Equal(expected, actual);
-        }
+        // [Theory]
+        // [InlineData("ff520269-78f3-4c6a-898f-c778968dce41","lol","POP","POP","POP","POP",false,"POP",false,null)]
+        // [InlineData("ff520269-78f3-4c6a-898f-c778968dce41","POP","POP","POP","POP","POP",false,"POP",false,null)]
+        // public async Task UpdateUser(Guid Id,string avatar,string userName,string normalizedUserName,string email, string normalizedEmail,bool emailConfirmed,
+        //     string passwordHash,bool isBanned,string expected)
+        // {
+        //     var user = new User(Id,avatar,userName,normalizedUserName,email,normalizedEmail,emailConfirmed,passwordHash,isBanned);
+        //     string stringjson = JsonConvert.SerializeObject(user);
+        //     var response = await _client.PostAsync("/API/user/update", new StringContent(stringjson));
+        //     var actual = await response.Content.ReadAsStringAsync();
+        //     dynamic jsonObject = JObject.Parse(actual);
+        //     Assert.Equal(expected, (string)jsonObject.hasErrors);
+        // }
+        //
+        // [Theory]
+        // [InlineData("ff520269-78f3-4c6a-898f-c778968dce41","POP","POP","POP","POP","POP",false,"POP",false,"User not updated")]
+        // public async Task UpdateUserWrong(Guid Id,string avatar,string userName,string normalizedUserName,string email, string normalizedEmail,bool emailConfirmed,
+        //     string passwordHash,bool isBanned,string expected)
+        // {
+        //     var user = new User(Id,avatar,userName,normalizedUserName,email,normalizedEmail,emailConfirmed,passwordHash,isBanned);
+        //     string stringjson = JsonConvert.SerializeObject(user);
+        //     var response = await _client.PostAsync("/API/user/update", new StringContent(stringjson));
+        //     var actual = await response.Content.ReadAsStringAsync();
+        //     actual = actual.Trim('"');
+        //     Assert.Equal(expected, actual);
+        // }
         
     }
 }

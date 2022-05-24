@@ -44,7 +44,7 @@ module UserRetository =
     let getAll (context : ApplicationContext) = context.Users
     
     // DONE
-    let getUser (context : ApplicationContext) id = context.Users |> Seq.tryFind (fun f -> f.Id = id)
+    let getUser (context : ApplicationContext) (id : Guid) = context.Users |> Seq.tryFind (fun f -> f.Id = id)
     
     // DONE
     let addUserAsync (context : ApplicationContext) (entity : User) = 
