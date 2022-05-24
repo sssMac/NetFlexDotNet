@@ -54,3 +54,61 @@ a {
 	text-decoration: none;
 }
 
+button{
+	cursor: pointer;
+}
+
+.review {
+	position: relative;
+	text-align: justify;
+	text-indent: 8px;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	margin-bottom: 25px;
+}
+.review .text {
+	word-break: break-word;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+	height: 115px;
+
+}
+.review .show_more_button {
+	cursor: pointer;
+	z-index: 1;
+	position: absolute;
+	bottom: -30px;
+	width: 100px;
+	height: 30px;
+	background: #111;
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	left: calc(50% - 50px);
+}
+.review .show_more_button .label:before {
+	position: relative;
+	top: -2px;
+	font-family: Montserrat, sans-serif;
+	font-size: 10pt;
+	content: "Show More";
+	color: #eee;
+}
+.review .show_more {
+	width: 100px;
+	height: 50px !important;
+	opacity: 0;
+	z-index: 2;
+	position: absolute !important;
+	bottom: -30px !important;
+	cursor: pointer;
+	top: auto;
+	left: calc(50% - 50px);
+}
+.review .show_more:checked ~ .text {
+	height: auto !important;
+}
+.review .show_more:checked ~ .show_more_button .label:before {
+	content: "Show less";
+}

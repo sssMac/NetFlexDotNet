@@ -6,7 +6,7 @@ import './CustomSelect.scss'
 import Select from "react-select";
 import {assignRole} from "../../../../actions/role";
 
-const User = ({user, roles}) => {
+const User = ({user, roles, refresh}) => {
     const [currentRole, setCurrentRole] = useState(user.Roles[0].Name)
     const dispatch = useDispatch()
     const emailCong = String(user.EmailConfirmed)
@@ -60,10 +60,16 @@ const User = ({user, roles}) => {
             <td>
                 {
                     user.Status === "access" ?
-                    <button className="button dark color-light" onClick={() => dispatch(block(user.Email))}>Block
+                    <button className="button dark color-light" onClick={() => {
+                        dispatch(block(user.Email))
+                        refresh(true)
+                    }}>Block
                     </button>
                         :
-                    <button className="button dark color-light" onClick={() => dispatch(unblock(user.Email))}>Unblock
+                    <button className="button dark color-light" onClick={() => {
+                        dispatch(unblock(user.Email))
+                        refresh(true)
+                    }}>Unblock
                     </button>
                 }
 

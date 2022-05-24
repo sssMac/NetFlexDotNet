@@ -17,7 +17,7 @@ const Users = () => {
                     }
                 })
                     .then(res => res.json())
-                    .then(res => setData(res.sort(a => a[res.Id])))
+                    .then(res => setData(res.sort((a, b) => a.Id > b.Id ? -1 : 1)))
 
             }
             fetchUsers().then(r => r);
@@ -53,7 +53,7 @@ const Users = () => {
                         </div>
                         <div className="block bg-magenta shadow">
                             <div className="text-secondary color-secondary-dark">Last registered</div>
-                            <div className="text-primary color-dark shadow">{data[data.length-1].UserName}</div></div>
+                            <div className="text-primary color-dark shadow">{data[data.length-1].Email}</div></div>
                         <div className="block bg-light">
                             <div className="text-secondary shadow">Manager</div>
                             <div className="text-primary color-dark shadow">
@@ -73,7 +73,8 @@ const Users = () => {
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
-                                { data.map(user => <User key={user.UserName} user={user} roles={roles}/>) }
+                                { data
+                                    .map(user => <User key={user.UserName} user={user} roles={roles} refresh={setButtonClicked}/>) }
                             </tbody>
                         </table>
                     </div>
