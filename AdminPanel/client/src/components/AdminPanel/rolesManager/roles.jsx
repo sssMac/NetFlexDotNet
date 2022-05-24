@@ -5,7 +5,7 @@ import {createRole, removeRole} from "../../../actions/role";
 import CreateRole from "./role/createRole/createRole";
 
 const Roles = () => {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState([]);
     const [modalActive, setModalActive] = useState(false)
     const [modalChild, setModalChild] = useState(<div/>)
     const [buttonClick, setButtonClicked] = useState(false)
@@ -32,6 +32,12 @@ const Roles = () => {
         }
     }, [buttonClick]);
 
+    const handleDelete = (id) => {
+        setData(data
+            .filter((item) => item.Id !== id)
+        );
+    };
+
     if(data != null){
         return (
             <div className='roleList'>
@@ -48,7 +54,7 @@ const Roles = () => {
                             <div className="text-secondary shadow">Manager</div>
                             <button className="button dark color-light" onClick={() => {
                                 setModalActive(true)
-                                setModalChild(<CreateRole />)
+                                setModalChild(<CreateRole setActive={setModalActive}/>)
                             }}> Create </button>
                             <button className="button dark color-light" onClick={() => setButtonClicked(true)}> Refresh </button>
                         </div>
@@ -61,12 +67,27 @@ const Roles = () => {
                                 <th>Role</th>
                                 <th>Actions</th>
                             </tr>
-                                {data.map(role => <Role key={role.Id} role={role} />) }
+                                {data
+                                    .sort((a, b) => a.Id > b.Id ? 1 : -1)
+                                    .map(role =>{
+                                    return <tr key={role.Id}>
+                                        <Role role={role} />
+                                        <td>
+                                            <button className="button dark color-light"
+                                                    disabled = { role.Name === "Admin" || role.Name === "User"}
+                                                    onClick={() => {
+                                                        removeRole(role.Id).then(r => r)
+                                                        handleDelete(role.Id)
+                                            }}>Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                })}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <Modal active={modalActive} setActive={setModalActive}>
+                <Modal active={modalActive} setActive={setModalActive} setButtonClicked={setButtonClicked}>
                     {modalChild}
                 </Modal>
             </div>

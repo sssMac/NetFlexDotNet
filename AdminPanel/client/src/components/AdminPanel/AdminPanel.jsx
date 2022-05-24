@@ -39,6 +39,10 @@ const AdminPanel = () => {
                     <div className="menu_button" data-text="Genres"><i className="fa-solid fa-bars-staggered"></i>
                     </div>
                 </NavLink>
+                <NavLink to="AdminPanel/Reviews" className={setActive}>
+                    <div className="menu_button" data-text="Reviews"><i className="fa-solid fa-book-bookmark"></i>
+                    </div>
+                </NavLink>
                 <NavLink to="AdminPanel/Subscriptions" className={setActive}>
                     <div className="menu_button" data-text="Subscriptions"><i className="fa-solid fa-circle-dollar-to-slot"></i>
                     </div>

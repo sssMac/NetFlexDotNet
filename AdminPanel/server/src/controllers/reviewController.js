@@ -116,7 +116,7 @@ class ReviewController {
 
         if (find.rows.length === 0)
             return next(new createError(401, `Review with id ${Id} not found!!`))
-        const Status = "pending"
+        const Status = "onpending"
         const result = await db.query(queries.changeStatus, [Status,Id])
         if (result.error) return next(new createError(401, result.error));
 
