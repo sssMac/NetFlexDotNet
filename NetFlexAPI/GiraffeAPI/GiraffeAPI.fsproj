@@ -16,6 +16,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.5" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.3" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
         <PackageReference Include="Ply" Version="0.3.*" />
@@ -37,7 +38,6 @@
       <Compile Include="Models\Role.fs" />
       <Compile Include="Models\CreateRole.fs" />
       <Compile Include="Models\UserAuth.fs" />
-      <Compile Include="Models\UserId.fs" />
       <Compile Include="Data\ApplicationContext.fs" />
       <Compile Include="JwtCreate.fs" />
       <Compile Include="Handler.fs" />

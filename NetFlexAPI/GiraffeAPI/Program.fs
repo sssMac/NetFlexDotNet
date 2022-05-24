@@ -72,30 +72,36 @@ let webApp =
         GET >=>
             choose [
                 // USERS
-                route "/API/user" >=> requireAdminRole >=> UsersHandler //get all users ok
-                routef "/API/user/%O" UserHandler // get users by id ok            TESTED    
-                routef "/API/user/ban/%O" UserBanHandler // ban user  ok TESTED
-                routef "/API/user/unban/%O" UserUnbanHandler // unban user ok TESTED
-                // ROLES
-                route "/API/role" >=> RolesHandler //get all roles ok
-                routef "/API/role/%O" RoleHandler //get role ok   TESTED 
+                requireAdminRole >=> choose[
+                    routef "/API/user/%O" UserHandler // get users by id ok   TESTED 
+                    routef "/API/user/ban/%O" UserBanHandler // ban user  ok TESTED
+                    routef "/API/user/unban/%O" UserUnbanHandler // unban user ok TESTED
+                    route "/API/user" >=> UsersHandler //get all users ok
+                    route "/API/role" >=> RolesHandler //get all roles ok
+                    routef "/API/role/%O" RoleHandler //get role ok   TESTED 
+                ]
             ]
         POST >=>
             choose [
-                 // USERS
-                 route "/API/user" >=> requireAdminRole >=> userAddHandler // add new user ok TESTED
-                 route "/API/user/update" >=>  requireAdminRole >=> UserUpdateHandler // Update user ok TESTED
+                 requireAdminRole >=> choose[
+                     // USERS
+                     route "/API/user" >=>  userAddHandler
+                     route "/API/user/update" >=>   UserUpdateHandler
+                     //ROLES
+                     route "/API/role" >=>  RoleAddHandler // add new role ok TESTED
+                     route "/API/role/update" >=>  RoleUpdateHandler  // update role ok TESTED
+                 ]
                  route "/API/user/auth" >=> AuthHandler // Auth TESTED
-                 //ROLES
-                 route "/API/role" >=> requireAdminRole >=> RoleAddHandler // add new role ok TESTED
-                 route "/API/role/update" >=> requireAdminRole >=> RoleUpdateHandler  // update role ok TESTED
+                 
             ]
         DELETE >=>
             choose [
-                // USERS
-                routef "/API/user/delete/%O" UserDeleteHandler // delete user ok
-                //ROLES
-                routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok
+                requireAdminRole >=> choose[
+                    // USERS
+                    routef "/API/user/delete/%O" UserDeleteHandler // delete user ok
+                    //ROLES
+                    routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok
+                ]
             ]
             
             
