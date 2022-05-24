@@ -7,6 +7,7 @@ const userRouter = require('./src/routes/userRouter')
 const corsMiddleware = require('./middleware/corsMiddleware')
 const genreRouter = require('./src/routes/genreRouter');
 const seriesRouter = require('./src/routes/seriesRouter');
+const filmsRouter = require('./src/routes/filmsRouter');
 const reviewRouter = require('./src/routes/reviewRouter');
 
 const app = express();
@@ -25,6 +26,8 @@ app.use("/user", userRouter);
 app.use("/genre", genreRouter);
 app.use("/review", reviewRouter);
 app.use("/series", seriesRouter);
+app.use("/films", filmsRouter);
+
 
 // home handler
 app.get("/", (res, rep) => {
