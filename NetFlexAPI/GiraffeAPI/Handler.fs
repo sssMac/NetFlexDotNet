@@ -11,6 +11,8 @@ open GiraffeAPI.Models.UserAuth
 open GiraffeAPI.Models.CreateSubscription
 open GiraffeAPI.Models.Subscription
 open GiraffeAPI.Models.UserRole
+open GiraffeAPI.Models.Genre
+open GiraffeAPI.Models.GenreCreate
 open Microsoft.AspNetCore.Http
 open GiraffeAPI.JwtCreate
 open Giraffe
@@ -211,3 +213,42 @@ let UserRoleUpdateHandler : HttpHandler =
                         | Some l -> ctx.WriteJsonAsync l
                         | None -> (setStatusCode 400 >=> json "Role not updated") next ctx
         }
+   
+   
+// GENRES        
+let GenreUpdateNameHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! genre = ctx.BindJsonAsync<Genre>()
+            return! updateGenreName context genre genre.Id |> function
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "Genre not updated") next ctx
+        }
+        
+let GenresHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            getAllGenres context |> ctx.WriteJsonAsync
+            
+let GenreDeleteHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        deleteGenre context id |> function
+        | Some l -> ctx.WriteJsonAsync l
+        | None -> (setStatusCode 404 >=> json "Genre not deleted") next ctx
+        
+let GenreAddHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! genre = ctx.BindJsonAsync<GenreCreate>()
+            match genre.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addGenreAsync context genre.GetGenre
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "Genre with this name made") next ctx
+                        }

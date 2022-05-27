@@ -71,6 +71,10 @@ let webApp =
     choose [
         GET >=>
             choose [
+                route "/API/genre" >=> GenresHandler
+            ]
+        GET >=>
+            choose [
                 requireAdminRole >=> choose[
                     // USERS
                     routef "/API/user/%O" UserHandler // get users by id ok   TESTED 
@@ -87,6 +91,11 @@ let webApp =
             ]
         POST >=>
             choose [
+                route "/API/genre/update" >=> GenreUpdateNameHandler
+                route "/API/genre" >=> GenreAddHandler
+            ]
+        POST >=>
+            choose [
                  requireAdminRole >=> choose[
                      // USERS
                      route "/API/user" >=>  userAddHandler  // add new user ok TESTED
@@ -100,18 +109,16 @@ let webApp =
                      route "/API/sub/update" >=>  SubUpdateHandler  // update subscription ok TESTED
                  ]
                  route "/API/user/auth" >=> AuthHandler // Auth TESTED
-                 
             ]
         DELETE >=>
             choose [
-                requireAdminRole >=> choose[
+                routef "/API/genre/delete/%O" GenreDeleteHandler
                     // USERS
-                    routef "/API/user/delete/%O" UserDeleteHandler // delete user ok TESTED
+                routef "/API/user/delete/%O" UserDeleteHandler // delete user ok TESTED
                     //ROLES
-                    routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok TESTED
+                routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok TESTED
                     // SUBSCRIPTIONS
-                    routef "/API/sub/delete/%O" SubDeleteHandler // delete subscription ok TESTED
-                ]
+                routef "/API/sub/delete/%O" SubDeleteHandler // delete subscription ok TESTED   
             ]
             
             

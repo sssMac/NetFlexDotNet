@@ -40,6 +40,8 @@
       <Compile Include="Models\UserAuth.fs" />
       <Compile Include="Models\Subscription.fs" />
       <Compile Include="Models\CreateSubscription.fs" />
+      <Compile Include="Models\Genre.fs" />
+      <Compile Include="Models\GenreCreate.fs" />
       <Compile Include="Data\ApplicationContext.fs" />
       <Compile Include="JwtCreate.fs" />
       <Compile Include="Handler.fs" />
