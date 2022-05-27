@@ -9,6 +9,7 @@ open GiraffeAPI.Models.UserRole
 open GiraffeAPI.Models.Role
 open GiraffeAPI.Models.UserAuth
 open GiraffeAPI.Models.Subscription
+open GiraffeAPI.Models.Genre
 open Microsoft.EntityFrameworkCore
 open System.Linq
 
@@ -46,6 +47,12 @@ type ApplicationContext(options : DbContextOptions<ApplicationContext>) =
         member x.Roles
             with get() = x.roles 
             and set v = x.roles <- v
+            
+        [<DefaultValue>]
+        val mutable genres:DbSet<Genre>
+        member x.Genres
+            with get() = x.genres 
+            and set v = x.genres <- v
               
               
 module UserRetository = 
@@ -193,6 +200,31 @@ module SubscriptionsRepository =
         context.Subscriptions.Remove(current)
         if context.SaveChanges true  >= 1  then Some(current) else None
         
+module GenreRepository =
+    
+    let updateGenreName (context : ApplicationContext) (entity : Genre) (id : Guid) = 
+        let current = context.Genres.Find(id)
+        let updated = { entity with Id = id }
+        context.Entry(current).CurrentValues.SetValues(updated)
+        if context.SaveChanges true >= 1  then Some(updated) else None
+        
+    let getAllGenres (context : ApplicationContext) = context.genres
+    
+    let deleteGenre (context:ApplicationContext) (id:Guid) =
+        let current = context.Genres.Find(id)
+        context.Genres.Remove(current)
+        if context.SaveChanges true  >= 1  then Some(current) else None
+        
+    let addGenreAsync (context : ApplicationContext) (entity : Genre) = 
+        async {
+            context.Genres.AddRangeAsync(entity)
+            |> Async.AwaitTask
+            |> ignore
+            let! result = context.SaveChangesAsync true |> Async.AwaitTask
+            let result = if result >= 1  then Some(entity) else None
+            return result
+        }
+        
 let getAll  = UserRetository.getAll 
 let getUser  = UserRetository.getUser
 let addUserAsync = UserRetository.addUserAsync
@@ -214,3 +246,8 @@ let getAllSub = SubscriptionsRepository.getAllSub
 let addSubAsync = SubscriptionsRepository.addSubAsync
 let updateSub = SubscriptionsRepository.updateSub
 let deleteSub = SubscriptionsRepository.deleteSub
+
+let updateGenreName = GenreRepository.updateGenreName
+let getAllGenres = GenreRepository.getAllGenres
+let deleteGenre = GenreRepository.deleteGenre
+let addGenreAsync = GenreRepository.addGenreAsync
