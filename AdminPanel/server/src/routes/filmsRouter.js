@@ -6,7 +6,7 @@ const router = Router();
 router.post("/addFilm", filmsController.addFilm);
 router.post('/addFilm',filmsController.addFilm)
 router.post('/deleteFilm',filmsController.deleteFilm)
-router.post('/renameFilm',filmsController.renameFilm)
+router.post('/updateFilm',filmsController.updateFilm)
 router.get('/all',filmsController.getAllFilms)
 
 
