@@ -31,7 +31,7 @@ export const login = (email, password) => {
             localStorage.setItem('token', response.data.accessToken)
 
         } catch (e) {
-            alert(e);
+            alert(e.response.data.message);
         }
     }
 }
@@ -48,6 +48,7 @@ export const auth =  () => {
         } catch (e) {
             console.log(e.response.data.message)
             localStorage.removeItem('token')
+
         }
     }
 }

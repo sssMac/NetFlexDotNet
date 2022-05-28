@@ -49,7 +49,7 @@ async function verifyAdmin(req,res,next){
             return next(new createError(401,"This is for administrators only !!"))
     }
     next() } catch (e) {
-        return res.status(401).json({message: 'Auth error'})
+        return next(new createError(401, e.message))
     }
 }
 module.exports = {

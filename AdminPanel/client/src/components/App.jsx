@@ -2,8 +2,10 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {auth} from "../actions/user";
 import {Routes, Route, Navigate} from 'react-router-dom'
+import { css } from "@emotion/react";
 import * as ReactBootStrap from 'react-bootstrap'
 import './app.scss'
+import BarLoader from 'react-spinners/BarLoader'
 
 import AdminPanel from "./AdminPanel/AdminPanel";
 import Login from "./AuthorizePanel/RegLog/login";
@@ -15,6 +17,9 @@ import Roles from "./AdminPanel/rolesManager/roles";
 import Genres from "./AdminPanel/genresManager/genres";
 import Subscriptions from "./AdminPanel/subscriptionsManager/subscriptions";
 import AuthorizePanel from "./AuthorizePanel/AuthorizePanel";
+import Reviews from "./AdminPanel/reviewsManager/reviews";
+
+
 
 
 function App() {
@@ -22,14 +27,27 @@ function App() {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false);
 
+    const override = css`
+      display: block;
+      margin-top: 25%;
+      margin-left: 45%;
+      border-color: red;
+      z-index: 9999;
+`;
+
     useEffect(() => {
         dispatch(auth());
         setLoading(true);
-    }, [])
+        setTimeout(() => {
+            setLoading(false)
+        }, 2000)
+    }, [isAuth])
 
   return (
       <div className="app">
-          {loading ?
+          {loading ? (
+              <BarLoader color={"#A80D20"} loading={loading} css={override} size={150} />
+              ) : (
               !isAuth ?
                   <Routes>
                       <Route path="/" element={<AuthorizePanel />}>
@@ -47,14 +65,13 @@ function App() {
                           <Route path="AdminPanel/Serials" element={<Serials />}/>
                           <Route path="AdminPanel/Roles" element={<Roles />}/>
                           <Route path="AdminPanel/Genres" element={<Genres />}/>
+                          <Route path="AdminPanel/Reviews" element={<Reviews />}/>
                           <Route path="AdminPanel/Subscriptions" element={<Subscriptions />}/>
                           <Route path="/" element={<Navigate to='AdminPanel/Users' replace />}/>
                           <Route path="*" element={<Navigate to='AdminPanel/Users' replace />}/>
                       </Route>
-                  </Routes>
-              :
-               <ReactBootStrap.Spinner animation="border" />}
-
+                  </Routes> )
+              }
       </div>
   );
 }

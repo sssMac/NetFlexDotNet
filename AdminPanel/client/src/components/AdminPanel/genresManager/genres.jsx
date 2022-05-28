@@ -2,13 +2,14 @@ import React, {useEffect, useState} from 'react';
 import Modal from "../../../utils/modal/modal";
 import Genre from "./genre/genre";
 import AddGenre from "./genre/addGenre/addGenre";
+import {removeGenre} from "../../../actions/genre";
+import RenameGenre from "./genre/renameGenre/renameGenre";
 
 const Genres = () => {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState([]);
     const [modalActive, setModalActive] = useState(false)
     const [modalChild, setModalChild] = useState(<div/>)
     const [buttonClick, setButtonClicked] = useState(false)
-
 
     useEffect( () => {
         try{
@@ -31,6 +32,13 @@ const Genres = () => {
         }
     }, [buttonClick]);
 
+    const handleDelete = (id) => {
+        setData(data
+            .filter((item) => item.Id !== id)
+        );
+    };
+
+
     if(data != null){
         return (
             <div className='genreList'>
@@ -47,7 +55,7 @@ const Genres = () => {
                             <div className="text-secondary shadow">Manager</div>
                             <button className="button dark color-light" onClick={() => {
                                 setModalActive(true)
-                                setModalChild(<AddGenre />)
+                                setModalChild(<AddGenre setActive={setModalActive}/>)
                             }}> Add </button>
                             <button className="button dark color-light" onClick={() => setButtonClicked(true)}> Refresh </button>
                         </div>
@@ -60,12 +68,32 @@ const Genres = () => {
                                 <th>Genre</th>
                                 <th>Actions</th>
                             </tr>
-                            {data.map(genre => <Genre key={genre.Id} genre={genre} modalChild={modalChild} setModalChild={setModalChild} setModalActive={setModalActive}/>) }
+                            {data
+                                .sort((a, b) => a.GenreName > b.GenreName ? 1 : -1)
+                                .map(genre =>{
+                                return <tr key={genre.Id}>
+                                    <Genre genre={genre}/>
+
+                                    <td>
+                                        <button className="button dark color-light" onClick={() => {
+                                            removeGenre(genre.Id).then(r => r)
+                                            handleDelete(genre.Id)
+                                        }}>Remove
+                                        </button>
+
+                                        <button className="button dark color-light" onClick={() => {
+                                            setModalActive(true)
+                                            setModalChild(<RenameGenre genre={genre} setActive={setModalActive}/>)
+                                        }}>Rename
+                                        </button>
+                                    </td>
+                                </tr>
+                            })}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <Modal active={modalActive} setActive={setModalActive}>
+                <Modal active={modalActive} setActive={setModalActive} setButtonClicked={setButtonClicked}>
                     {modalChild}
                 </Modal>
             </div>
