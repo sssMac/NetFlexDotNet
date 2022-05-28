@@ -26,9 +26,10 @@ class ReviewController {
         const Text = req.body.Text
         const Rating = req.body.Rating
         const PublishTime = new Date()
+        const Status = "pending"
 
 
-        const result = await db.query(queries.push, [Id, UserName, ContentId, Text, Rating, PublishTime])
+        const result = await db.query(queries.push, [Id, UserName, ContentId, Text, Rating, PublishTime,Status])
         if (result.error)
             return next(new createError(401), result.error)
         res.status(200).json({
@@ -68,6 +69,60 @@ class ReviewController {
             return next(new createError(401, 'Review not found!'));
 
         return res.status(200).json(result.rows)
+    }
+    async accept(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return next(new createError(400, errors));
+        }
+        const Id = req.body.Id
+        const findReview = await db.query(queries.getById, [Id])
+
+        if (findReview.rows.length === 0)
+            return next(new createError(401, `Review with id ${Id} not found!!`))
+        const Status = "accepted"
+        const result = await db.query(queries.changeStatus, [Status,Id])
+        if (result.error) return next(new createError(401, result.error));
+
+        return res.status(200).json({
+            message: `Review accepted`
+        })
+    }
+    async reject(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return next(new createError(400, errors));
+        }
+        const Id = req.body.Id
+        const findOne = await db.query(queries.getById, [Id])
+
+        if (findOne.rows.length === 0)
+            return next(new createError(401, `Review with id ${Id} not found!!`))
+        const Status = "canceled"
+        const result = await db.query(queries.changeStatus, [Status,Id])
+        if (result.error) return next(new createError(401, result.error));
+
+        return res.status(200).json({
+            message: `Review rejected`
+        })
+    }
+    async pending(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return next(new createError(400, errors));
+        }
+        const Id = req.body.Id
+        const find = await db.query(queries.getById, [Id])
+
+        if (find.rows.length === 0)
+            return next(new createError(401, `Review with id ${Id} not found!!`))
+        const Status = "onpending"
+        const result = await db.query(queries.changeStatus, [Status,Id])
+        if (result.error) return next(new createError(401, result.error));
+
+        return res.status(200).json({
+            message: `Review on pending`
+        })
     }
 }
 

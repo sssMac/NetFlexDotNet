@@ -21,4 +21,16 @@ router.post('/allByContentId'
     , check('ContentId').exists().isUUID(),
     reviewController.allByConId)
 
+router.post('/accept'
+    , check('Id').exists().isUUID(),
+    reviewController.accept)
+
+router.post('/reject'
+    , check('Id').exists().isUUID(),
+    reviewController.reject)
+
+router.post('/pending'
+    , check('Id').exists().isUUID(),
+    reviewController.pending)
+
 module.exports = router;

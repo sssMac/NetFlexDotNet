@@ -14,6 +14,12 @@ open Handler
 open ApplicationContext
 open Microsoft.EntityFrameworkCore
 open FSharp.Data.Sql
+open Microsoft.AspNetCore.Authentication.JwtBearer
+open Microsoft.IdentityModel.Tokens
+open System.Security.Claims
+open System.IdentityModel.Tokens.Jwt
+open System.Text
+open GiraffeAPI.JwtCreate
 
 // ---------------------------------
 // Models
@@ -65,19 +71,54 @@ let webApp =
     choose [
         GET >=>
             choose [
-                route "/API/user" >=> UsersHandler //get user
-                routef "/API/user/%O" UserHandler // get all users
+                route "/API/genre" >=> GenresHandler
+            ]
+        GET >=>
+            choose [
+                requireAdminRole >=> choose[
+                    // USERS
+                    routef "/API/user/%O" UserHandler // get users by id ok   TESTED 
+                    routef "/API/user/ban/%O" UserBanHandler // ban user  ok TESTED
+                    routef "/API/user/unban/%O" UserUnbanHandler // unban user ok TESTED
+                    route "/API/user" >=> UsersHandler //get all users ok
+                    // ROLES
+                    route "/API/role" >=> RolesHandler //get all roles ok
+                    routef "/API/role/%O" RoleHandler //get role ok   TESTED
+                    // SUBSCRIPIONS
+                    route "/API/sub" >=> SubsHandler //get all subscription ok 
+                    routef "/API/sub/%O" SubHandler //get subscription ok   TESTED
+                ]
             ]
         POST >=>
             choose [
-                 route "/API/user" >=> userAddHandler // add new user
-                 routef "/API/user/ban/%O" UserBanHandler // ban user
-                 routef "/API/user/unban/%O" UserUnbanHandler // unban user
-                 route "/API/user/update" >=> UserUpdateHandler // Update user
+                route "/API/genre/update" >=> GenreUpdateNameHandler
+                route "/API/genre" >=> GenreAddHandler
+            ]
+        POST >=>
+            choose [
+                 requireAdminRole >=> choose[
+                     // USERS
+                     route "/API/user" >=>  userAddHandler  // add new user ok TESTED
+                     route "/API/user/update" >=>   UserUpdateHandler // update user ok TESTED
+                     //ROLES
+                     route "/API/role" >=>  RoleAddHandler // add new role ok TESTED
+                     route "/API/role/update" >=>  RoleUpdateHandler  // update role ok TESTED
+                     route "/API/userrole/update" >=>  UserRoleUpdateHandler  // update userrole ok TESTED
+                     // SUBSCRIPIONS
+                     route "/API/sub" >=>  SubAddHandler // add new subscription ok TESTED
+                     route "/API/sub/update" >=>  SubUpdateHandler  // update subscription ok TESTED
+                 ]
+                 route "/API/user/auth" >=> AuthHandler // Auth TESTED
             ]
         DELETE >=>
             choose [
-                routef "/API/user/delete/%O" UserDeleteHandler // delete user
+                routef "/API/genre/delete/%O" GenreDeleteHandler
+                    // USERS
+                routef "/API/user/delete/%O" UserDeleteHandler // delete user ok TESTED
+                    //ROLES
+                routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok TESTED
+                    // SUBSCRIPTIONS
+                routef "/API/sub/delete/%O" SubDeleteHandler // delete subscription ok TESTED   
             ]
             
             
@@ -110,12 +151,17 @@ let configureApp (app : IApplicationBuilder) =
     (match env.IsDevelopment() with
     | true  ->
         app.UseDeveloperExceptionPage()
+            .UseAuthentication()
     | false ->
-        app .UseGiraffeErrorHandler(errorHandler)
+        app
+            .UseAuthentication()
+            .UseGiraffeErrorHandler(errorHandler)
             .UseHttpsRedirection())
         .UseCors(configureCors)
         .UseStaticFiles()
         .UseGiraffe(webApp)
+
+
 
 let configureServices (services : IServiceCollection) =
     services.AddDbContext<ApplicationContext>
@@ -123,12 +169,64 @@ let configureServices (services : IServiceCollection) =
         options.UseNpgsql
             (@"User ID=postgres; Server=localhost; port=5432; Database=NetFlexDb; Password=ALEXRED123321!@; Pooling=true;") 
         |> ignore) |> ignore
+    services.AddAuthentication(fun opt ->
+        opt.DefaultAuthenticateScheme <- JwtBearerDefaults.AuthenticationScheme
+    ).AddJwtBearer(fun (opt : JwtBearerOptions)->
+        opt.TokenValidationParameters <-  TokenValidationParameters(
+            ValidateActor = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = "jwtwebapp.net",
+                ValidAudience = "jwtwebapp.net",
+                IssuerSigningKey = SymmetricSecurityKey(Encoding.UTF8.GetBytes(GiraffeAPI.JwtCreate.secret))
+        )) |> ignore
     services.AddCors()    |> ignore
     services.AddGiraffe() |> ignore
 
 let configureLogging (builder : ILoggingBuilder) =
     builder.AddConsole()
            .AddDebug() |> ignore
+           
+           
+type Startup() =
+    member _.ConfigureServices (services : IServiceCollection) =
+        services.AddDbContext<ApplicationContext>
+            (fun (options : DbContextOptionsBuilder) -> 
+            options.UseNpgsql
+                (@"User ID=postgres; Server=localhost; port=5432; Database=NetFlexDb; Password=ALEXRED123321!@; Pooling=true;") 
+            |> ignore) |> ignore
+        services.AddAuthentication(fun opt ->
+            opt.DefaultAuthenticateScheme <- JwtBearerDefaults.AuthenticationScheme
+            ).AddJwtBearer(fun (opt : JwtBearerOptions)->
+        opt.TokenValidationParameters <-  TokenValidationParameters(
+            ValidateActor = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = "jwtwebapp.net",
+                ValidAudience = "jwtwebapp.net",
+                IssuerSigningKey = SymmetricSecurityKey(Encoding.UTF8.GetBytes(GiraffeAPI.JwtCreate.secret))
+        )) |> ignore
+        services.AddCors()    |> ignore
+        services.AddGiraffe() |> ignore
+
+    member _.Configure (app : IApplicationBuilder)
+                        (_ : IHostEnvironment)
+                        (_ : ILoggerFactory) =
+        let env = app.ApplicationServices.GetService<IWebHostEnvironment>()
+        (match env.IsDevelopment() with
+    | true  ->
+        app.UseDeveloperExceptionPage()
+            .UseAuthentication()
+    | false ->
+        app
+            .UseAuthentication()
+            .UseGiraffeErrorHandler(errorHandler)
+            .UseHttpsRedirection())
+            .UseCors(configureCors)
+            .UseStaticFiles()
+            .UseGiraffe(webApp)
 
 [<EntryPoint>]
 let main args =
@@ -147,3 +245,5 @@ let main args =
         .Build()
         .Run()
     0
+    
+    

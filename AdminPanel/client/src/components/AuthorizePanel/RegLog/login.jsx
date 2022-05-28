@@ -3,13 +3,14 @@ import './RegLog.scss'
 import Input from "../../../utils/input/Input";
 import {NavLink} from "react-router-dom";
 import {login} from "../../../actions/user";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../../reducers/userReducer";
 
 const Login = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const dispatch = useDispatch()
+    const isFetchError = useSelector(state => state.user.isFetchError)
 
     const handleLogin = (e) => {
         e.preventDefault();

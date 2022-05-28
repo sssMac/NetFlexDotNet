@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const {randomUUID} = require("crypto");
 const jwt = require("jsonwebtoken");
+const db = require("../database/db");
+const queries = require("../queries/userQueries");
 
 class AuthController {
     async registration(req, res, next) {
@@ -59,12 +61,15 @@ class AuthController {
 
             const user = await userService.findOne(email)
 
-
             if (!user)
                 return next(new createError(404, `User with email ${email} not fund`))
 
             if (!bcrypt.compareSync(password, user.PasswordHash))
                 return next(new createError(400, 'Invalid password'))
+
+            const role = await userService.getRole(user.Id)
+            if (role[0].Name !== "Admin")
+                return next(new createError(401,"This is for administrators only !!"))
 
             let accessToken = await userService.hasToken(user.Id);
             if (!accessToken)
