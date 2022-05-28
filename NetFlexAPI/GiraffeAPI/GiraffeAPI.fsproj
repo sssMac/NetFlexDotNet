@@ -42,6 +42,10 @@
       <Compile Include="Models\CreateSubscription.fs" />
       <Compile Include="Models\Genre.fs" />
       <Compile Include="Models\GenreCreate.fs" />
+      <Compile Include="Models\Film.fs" />
+      <Compile Include="Models\GenreVideo.fs" />
+      <Compile Include="Models\FilmCreateRequest.fs" />
+      <Compile Include="Models\FilmUpdate.fs" />
       <Compile Include="Data\ApplicationContext.fs" />
       <Compile Include="JwtCreate.fs" />
       <Compile Include="Handler.fs" />

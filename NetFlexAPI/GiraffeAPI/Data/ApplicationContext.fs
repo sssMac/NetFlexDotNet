@@ -10,6 +10,8 @@ open GiraffeAPI.Models.Role
 open GiraffeAPI.Models.UserAuth
 open GiraffeAPI.Models.Subscription
 open GiraffeAPI.Models.Genre
+open GiraffeAPI.Models.Film
+open GiraffeAPI.Models.GenreVideo
 open Microsoft.EntityFrameworkCore
 open System.Linq
 
@@ -53,6 +55,18 @@ type ApplicationContext(options : DbContextOptions<ApplicationContext>) =
         member x.Genres
             with get() = x.genres 
             and set v = x.genres <- v
+            
+        [<DefaultValue>]
+        val mutable films:DbSet<Film>
+        member x.Films 
+            with get() = x.films 
+            and set v = x.films <- v
+            
+        [<DefaultValue>]
+        val mutable genrevideo:DbSet<GenreVideo>
+        member x.GenreVideos 
+            with get() = x.genrevideo 
+            and set v = x.genrevideo <- v
               
               
 module UserRetository = 
@@ -225,6 +239,58 @@ module GenreRepository =
             return result
         }
         
+module FilmRepository =
+    
+    let getAllFilms (context : ApplicationContext) = context.films
+    
+    let getFilm (context : ApplicationContext) (id : Guid) = context.Films |> Seq.tryFind (fun f -> f.Id = id)
+    
+    let addFilmAsync (context : ApplicationContext) (entity : Film) (genre : string) = 
+        async {
+            context.Films.AddRangeAsync(entity)
+            |> Async.AwaitTask
+            |> ignore
+            let genreVideo : GenreVideo[]=
+                [|
+                    { Id = Guid.NewGuid() ; GenreName = genre; ContentId=entity.Id }
+                |]
+            context.GenreVideos.AddRangeAsync(genreVideo)
+            |> Async.AwaitTask
+            |> ignore
+            let! result = context.SaveChangesAsync true |> Async.AwaitTask
+            let result = if result >= 1  then Some(entity) else None
+            return result
+        }
+        
+    let deleteFilm (context:ApplicationContext) (id:Guid) =
+        let current = context.Films.Find(id)
+        context.Films.Remove(current)
+        let currentGenre =
+                query {
+                    for genreVideo in context.GenreVideos do
+                        find (genreVideo.ContentId.Equals (id))
+                }
+        context.GenreVideos.Remove(currentGenre)
+        if context.SaveChanges true  >= 1  then Some(current) else None
+        
+    let updateFilm (context : ApplicationContext) (entity : Film) (genre : string) = 
+        let current = context.Films.Find(entity.Id)
+        let updated = { entity with Id = entity.Id }
+        context.Entry(current).CurrentValues.SetValues(updated)
+        let currentGenre =
+                query {
+                    for genreVideo in context.GenreVideos do
+                        find (genreVideo.ContentId.Equals (entity.Id))
+                }
+        let genreVideo : GenreVideo[]=
+                [|
+                    { Id = currentGenre.Id ; GenreName = genre; ContentId=currentGenre.ContentId }
+                |]
+        context.Entry(currentGenre).CurrentValues.SetValues(genreVideo[0])
+        if context.SaveChanges true >= 1  then Some(updated) else None
+    
+    
+        
 let getAll  = UserRetository.getAll 
 let getUser  = UserRetository.getUser
 let addUserAsync = UserRetository.addUserAsync
@@ -251,3 +317,9 @@ let updateGenreName = GenreRepository.updateGenreName
 let getAllGenres = GenreRepository.getAllGenres
 let deleteGenre = GenreRepository.deleteGenre
 let addGenreAsync = GenreRepository.addGenreAsync
+
+let getFilm = FilmRepository.getFilm
+let getAllFilms = FilmRepository.getAllFilms
+let addFilmAsync = FilmRepository.addFilmAsync
+let deleteFilm = FilmRepository.deleteFilm
+let updateFilm = FilmRepository.updateFilm

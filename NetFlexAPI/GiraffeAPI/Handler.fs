@@ -12,7 +12,10 @@ open GiraffeAPI.Models.CreateSubscription
 open GiraffeAPI.Models.Subscription
 open GiraffeAPI.Models.UserRole
 open GiraffeAPI.Models.Genre
+open GiraffeAPI.Models.FilmCreateRequest
 open GiraffeAPI.Models.GenreCreate
+open GiraffeAPI.Models.FilmUpdate
+open GiraffeAPI.Models.Film
 open Microsoft.AspNetCore.Http
 open GiraffeAPI.JwtCreate
 open Giraffe
@@ -252,3 +255,48 @@ let GenreAddHandler : HttpHandler =
                         | Some l -> Successful.CREATED l next ctx
                         | None -> (setStatusCode 400 >=> json "Genre with this name made") next ctx
                         }
+       
+        
+let FilmsHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            getAllFilms context |> ctx.WriteJsonAsync
+            
+let FilmHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        getFilm context id |> function
+            | Some l -> ctx.WriteJsonAsync l
+            | None -> (setStatusCode 404 >=> json "Film not find") next ctx
+            
+let FilmAddHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! film = ctx.BindJsonAsync<FilmCreateRequest>()
+            match film.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addFilmAsync context film.GetFilm film.GenreName 
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "Genre with this name made") next ctx
+                        }
+        
+let FilmDeleteHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        deleteFilm context id |> function
+        | Some l -> ctx.WriteJsonAsync l
+        | None -> (setStatusCode 404 >=> json "Film not deleted") next ctx
+        
+let FilmUpdateHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! film = ctx.BindJsonAsync<FilmUpdate>()
+            return! updateFilm context film.GetFilm film.GenreName |> function
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "Film not updated") next ctx
+        }
