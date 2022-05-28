@@ -51,7 +51,7 @@ class seriesController {
         if (findOne.rows.length === 0)
             return next(new createError(404, `Not found serial!!`));
 
-        const result = await db.query(queries.updateSerial, [newName, id])
+        const result = await db.query(queries.updateSerial, [id, poster, title, numEpisodes, ageRating, userRating, description])
         if (result.error) return next(new createError(500, result.error));
 
         return res.status(200).json({
