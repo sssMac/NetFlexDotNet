@@ -8,22 +8,20 @@ const {randomUUID} = require("crypto");
 
 class seriesController {
     async addSerial(req, res, next) {
-        const {serialName} = req.body
-        if (!serialName)
-            return next(new createError(400, 'Not found serialName'));
+        const {poster, title, numEpisodes, ageRating, userRating, description} = req.body
 
-        const findOne = await db.query(queries.findSerial, [serialName])
+        const findOne = await db.query(queries.findSerial, [title])
         if (findOne.error)
-            return next(new createError(401, findOne.error));
+            return next(new createError(500, findOne.error));
 
         if (findOne.rows.length !== 0)
-            return next(new createError(401, `Serial with name ${serialName} already exist`));
+            return next(new createError(400, `Serial with name ${title} already exist`));
 
-        const result = await db.query(queries.addSerial, [randomUUID(), serialName])
-        if (result.error) return next(new createError(401, result.error));
+        const result = await db.query(queries.addSerial, [randomUUID(), poster, title, numEpisodes, ageRating, userRating, description])
+        if (result.error) return next(new createError(500, result.error));
 
         return res.status(200).json({
-            message: `Serial with name ${serialName} added`
+            message: `Serial with name ${title} added`
         })
 
     }
@@ -34,32 +32,33 @@ class seriesController {
         const findOne = await db.query(queries.findSerialById, [id])
 
         if (findOne.rows.length === 0)
-            return next(new createError(401, `Not found serial!!`));
+            return next(new createError(404, `Not found serial!!`));
 
         const result = await db.query(queries.deleteSerial, [id])
 
-        if (result.error) return next(new createError(401, 'Serial not found!!'));
+        if (result.error) return next(new createError(500, 'Unable to delete serial!!'));
 
         return res.status(200).json({
             message: `Serial deleted`
         })
     }
 
-    async renameSerial(req, res, next) {
-        const {id, newName} = req.body
+    async updateSerial(req, res, next) {
+        const {id, poster, title, numEpisodes, ageRating, userRating, description} = req.body
 
         const findOne = await db.query(queries.findSerialById, [id])
 
         if (findOne.rows.length === 0)
-            return next(new createError(401, `Not found serial!!`));
+            return next(new createError(404, `Not found serial!!`));
 
-        const result = await db.query(queries.renameSerial, [newName, id])
-        if (result.error) return next(new createError(401, result.error));
+        const result = await db.query(queries.updateSerial, [id, poster, title, numEpisodes, ageRating, userRating, description])
+        if (result.error) return next(new createError(500, result.error));
 
         return res.status(200).json({
-            message: `Serial renamed`
+            message: `Serial updated`
         })
     }
+    
     async getAllSerials(req, res, next) {
         const result = await db.query(queries.getAllSerials)
         return res.status(200).json(result.rows)

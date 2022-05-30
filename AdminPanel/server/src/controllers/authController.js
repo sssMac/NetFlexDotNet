@@ -40,6 +40,8 @@ class AuthController {
 
             await userService.saveToken(user.Id, accessToken);
 
+            await userService.addUserSubscription(user.Id)
+
             return res.status(200).json({
                 accessToken: accessToken,
                 user: {

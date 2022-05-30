@@ -33,4 +33,6 @@ router.post('/pending'
     , check('Id').exists().isUUID(),
     reviewController.pending)
 
+router.get('/allByStatus' , reviewController.allByStatus)
+
 module.exports = router;
