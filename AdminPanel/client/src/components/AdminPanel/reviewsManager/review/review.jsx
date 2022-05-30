@@ -2,17 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {acceptReview, cancelReview, pendingReview} from "../../../../actions/review";
 
 const Review = ({review,handleAction}) => {
-    const [firstBtn, setFirstBtn] = useState( <button className="button dark color-green"
-                                                      onClick={() => {
-                                                          acceptReview(review.Id).then(r => r)
-                                                          handleAction(review.Id)
-                                                      }}> Accept </button>)
+    const [firstBtn, setFirstBtn] = useState( <button></button>)
 
-    const [secondBtn, setSecondBtn] = useState( <button className="button dark color-red"
-                                                        onClick={() => {
-                                                            cancelReview(review.Id).then(r => r)
-                                                            handleAction(review.Id)
-                                                        }} > Cancel </button>)
+    const [secondBtn, setSecondBtn] = useState( <button></button>)
 
 
     useEffect(() => {
@@ -39,6 +31,18 @@ const Review = ({review,handleAction}) => {
                                      acceptReview(review.Id).then(r => r)
                                      handleAction(review.Id)
                                  }}> Accept </button>)
+        }
+        else{
+            setFirstBtn(<button className="button dark color-green"
+                                onClick={() => {
+                                    acceptReview(review.Id).then(r => r)
+                                    handleAction(review.Id)
+                                }}> Accept </button>)
+            setSecondBtn(<button className="button dark color-red"
+                                 onClick={() => {
+                                     cancelReview(review.Id).then(r => r)
+                                     handleAction(review.Id)
+                                 }} > Cancel </button>)
         }
     })
 

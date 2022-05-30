@@ -52,8 +52,8 @@ const Users = () => {
                             <div className="text-primary color-dark shadow">{data.length}</div>
                         </div>
                         <div className="block bg-magenta shadow">
-                            <div className="text-secondary color-secondary-dark">Last registered</div>
-                            <div className="text-primary color-dark shadow">{data[data.length-1].Email}</div></div>
+                            <div className="text-secondary color-secondary-dark"></div>
+                            <div className="text-primary color-dark shadow"></div></div>
                         <div className="block bg-light">
                             <div className="text-secondary shadow">Manager</div>
                             <div className="text-primary color-dark shadow">
@@ -69,7 +69,6 @@ const Users = () => {
                                 <th>Avatar</th>
                                 <th>Name/Email</th>
                                 <th>Role</th>
-                                <th>Email Confirmed</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>

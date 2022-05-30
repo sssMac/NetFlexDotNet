@@ -45,9 +45,6 @@ const User = ({user, roles, refresh}) => {
                 <div className="text-secondary">{user.Roles[0].Name}</div>
             </td>
             <td>
-                <div className="text-primary color-light">{emailCong}</div>
-            </td>
-            <td>
                 {
                     user.Status === "access" ?
                         <div className="text-primary color-green">{user.Status}</div>

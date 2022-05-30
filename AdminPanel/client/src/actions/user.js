@@ -11,7 +11,7 @@ export const registration = async (email, password, confirmPassword) => {
         confirmPassword,
       }
     );
-    alert(response.data.user.email);
+    alert("Пользователь " + (response.data.user.email) + " зарегистрирован");
   } catch (e) {
     alert(e);
   }

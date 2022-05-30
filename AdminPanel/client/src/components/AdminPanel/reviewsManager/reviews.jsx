@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {removeRole} from "../../../actions/role";
 import Modal from "../../../utils/modal/modal";
 import Review from "./review/review";
@@ -14,8 +14,8 @@ const Reviews = () => {
 
     useEffect( () => {
         try{
-            async function fetchRoles(){
-                let response = await fetch("http://localhost:5000/review/all", {
+            async function fetchReviews(){
+                let response = await fetch("http://localhost:5000/review/allByStatus?status=accepted", {
                     method: "GET",
                     headers: {
                         "Authorization": localStorage.getItem("token")
@@ -25,7 +25,7 @@ const Reviews = () => {
                     .then(res => setData(res))
 
             }
-            fetchRoles().then(r => r);
+            fetchReviews().then(r => r);
             setButtonClicked(false)
         }
         catch (e){
@@ -34,37 +34,70 @@ const Reviews = () => {
     }, [buttonClick]);
 
 
-    const [filer, setFilter] = useState(data
-        .sort((a, b) => a.PublishTime > b.PublishTime ? 1 : -1)
-        .filter((item) => item.Status === 'onpending'))
-
-
     const handleAction = (id) => {
-        setFilter(filer
+        setData(data
             .filter((item) => item.Id !== id)
         );
     };
 
     const handleAccepted = () => {
-        setButtonClicked(true)
-        setFilter(data
-            .sort((a, b) => a.PublishTime > b.PublishTime ? 1 : -1)
-            .filter((item) => item.Status === 'accepted')
-        );
+        try{
+            async function fetchReviews(){
+                let response = await fetch("http://localhost:5000/review/allByStatus?status=accepted", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setData(res))
+
+            }
+            fetchReviews().then(r => r);
+        }
+        catch (e){
+
+        }
     };
+
     const handleCanceled = () => {
-        setButtonClicked(true)
-        setFilter(data
-            .sort((a, b) => a.PublishTime > b.PublishTime ? 1 : -1)
-            .filter((item) => item.Status === "canceled")
-        );
+        try{
+            async function fetchReviews(){
+                let response = await fetch("http://localhost:5000/review/allByStatus?status=canceled", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setData(res))
+
+            }
+            fetchReviews().then(r => r);
+        }
+        catch (e){
+
+        }
     };
+
     const handlePending = () => {
-        setButtonClicked(true)
-        setFilter(data
-            .filter((item) => item.Status === "onpending")
-            .sort((a, b) => a.PublishTime > b.PublishTime ? 1 : -1)
-        );
+        try{
+            async function fetchReviews(){
+                let response = await fetch("http://localhost:5000/review/allByStatus?status=onpending", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setData(res))
+
+            }
+            fetchReviews().then(r => r);
+        }
+        catch (e){
+
+        }
     };
 
     if(data != null){
@@ -105,7 +138,7 @@ const Reviews = () => {
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
-                            {filer
+                            {data
                                 .sort((a, b) => a.PublishTime > b.PublishTime ? 1 : -1)
                                 .map(review => <Review key={review.Id} review={review} handleAction={handleAction} /> )}
                             </tbody>
