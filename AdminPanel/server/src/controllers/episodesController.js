@@ -59,9 +59,13 @@ class episodesController {
         })
     }
     
-    async getAllEpisodes(req, res, next) {
-        const result = await db.query(queries.getAllEpisodes)
-        return res.status(200).json(result.rows)
+    async getEpisodeBySerialId(req, res, next) {
+        const {serialId} = req.body
+        const episodeSerialId = await db.query(queries.getEpisodeBySerialId, [serialId])
+        
+        if (episodeSerialId.rows.length === 0)
+            return next(new createError(404, `Not found episode!!`));
+        return res.status(200).json(episodeSerialId.rows)
     }
 }
 

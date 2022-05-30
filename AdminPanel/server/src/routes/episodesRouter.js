@@ -7,7 +7,7 @@ const router = Router();
 router.post('/addEpisode', episodesController.addEpisode);
 router.post('/deleteEpisode',episodesController.deleteEpisode)
 router.post('/updateEpisode',episodesController.updateEpisode)
-router.get('/all',episodesController.getAllEpisodes)
+router.get('/episodesBySerialId',episodesController.getEpisodeBySerialId)
 
 
 module.exports = router;
