@@ -13,6 +13,7 @@ const updateFinishDateUserSubs = 'update "UserSubscriptions" set "FinishDate" = 
 const findUserSubsByUserId = 'select * from "UserSubscriptions" where "UserId" = $1';
 const getAllUserSubs = 'select "AspNetUsers"."Id","Email","UserName","Avatar","Status",ANUR."Id" as "UserSubscriptionId",ANUR."SubscriptionId",ANUR."StartDate",ANUR."FinishDate" from "AspNetUsers"  join "UserSubscriptions" ANUR on "AspNetUsers"."Id" = ANUR."UserId"';
 const updateSubscriptionId = 'update "UserSubscriptions" set "SubscriptionId" = $1 where "UserId" = $2'
+const getSubsType = 'select "Name" from "Subscriptions" join "UserSubscriptions" ANR on "Subscriptions"."Id" = ANR."SubscriptionId" where ANR."UserId" = $1';
 
 module.exports = {
     addSubs,
@@ -28,5 +29,6 @@ module.exports = {
     updateFinishDateUserSubs,
     findUserSubsByUserId,
     getAllUserSubs,
-    updateSubscriptionId
+    updateSubscriptionId,
+    getSubsType
 };

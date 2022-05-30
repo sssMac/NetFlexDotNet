@@ -2,6 +2,7 @@ const {Router} = require("express");
 const router = Router();
 const reviewController = require('../controllers/reviewController')
 const {check} = require('express-validator');
+const {verifySubscription} = require('../../middleware/subsMiddleware');
 
 
 router.get('/all', reviewController.allReview)
@@ -11,7 +12,7 @@ router.post('/publicReview'
     , check('ContentId').exists().isString()
     , check('Text').exists().isString()
     , check('Rating').exists().isDecimal(),
-    reviewController.publicReview)
+    verifySubscription,reviewController.publicReview)
 
 router.post('/removeReview'
     , check('Id').exists().isUUID(),
