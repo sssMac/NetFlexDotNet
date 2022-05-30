@@ -2,10 +2,17 @@ const db = require("../database/db");
 const queries = require("../queries/userQueries");
 const createError = require("../errors/createError");
 const roleDto = require("../models/roleDTO")
+const {randomUUID} = require("crypto");
 
 class UserService {
     async findOne(email){
         const user = await db.query(queries.findUser, [email])
+        if (user.error) return null
+        if (user.rows.length === 0) return null;
+        return user.rows[0];
+    }
+    async findOneById(userId){
+        const user = await db.query(queries.findUserById, [userId])
         if (user.error) return null
         if (user.rows.length === 0) return null;
         return user.rows[0];
@@ -50,6 +57,19 @@ class UserService {
                 r.Name
             )
         })
+    }
+    async addUserSubscription(UserId){
+        const Id = randomUUID()
+        const SubscriptionId = 1
+        const StartDate = new Date();
+        const FinishDate = new Date(StartDate)
+        FinishDate.setMonth(FinishDate.getMonth() + 1 )
+
+        const user = await db.query(queries.addSubscription, [Id,UserId,SubscriptionId,StartDate,FinishDate])
+
+        if (user.error)  return null
+        if (user.rows.length === 0) return null;
+        return user.rows[0];
     }
 
 }

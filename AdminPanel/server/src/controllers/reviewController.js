@@ -124,6 +124,18 @@ class ReviewController {
             message: `Review on pending`
         })
     }
+    async allByStatus(req, res, next) {
+
+        const status = req.query.status
+
+        const result = await db.query(queries.getAllByStatus,[status])
+        if (result.error)
+            return next(new createError(401), 'The status is not correct')
+        if (result.rows.length === 0)
+            return next(new createError(400, `Not found reviews with status '${status}'`))
+
+        res.status(200).json(result.rows)
+    }
 }
 
 
