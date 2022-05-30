@@ -82,7 +82,7 @@ class seriesController {
 
         let serialsWithGenders = []
 
-        for (const film of allFilms) {
+        for (const film of allSerials) {
 
             const s = new serialDTO()
                 .setId(film.Id)
