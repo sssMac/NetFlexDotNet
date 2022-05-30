@@ -93,7 +93,7 @@ class filmsController {
                 .setUserRating(film.UserRating)
                 .setDescriptions(film.Description)
                 .setVideoLink(film.VideoLink)
-            const result = db.query(queries.findAllGenreVideos,[f.Id])
+            const result = await db.query(queries.findAllGenreVideos,[f.Id])
             f.setGenrers(result.rows)
 
             filmsWithGenders.push(f)

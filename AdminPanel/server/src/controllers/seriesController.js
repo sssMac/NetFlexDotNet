@@ -92,7 +92,7 @@ class seriesController {
                 .setAgeRation(film.AgeRating)
                 .setUserRating(film.UserRating)
                 .setDescriptions(film.Description)
-            const result = db.query(filmsQueries.findAllGenreVideos,[s.Id])
+            const result = await db.query(filmsQueries.findAllGenreVideos,[s.Id])
             s.setGenrers(result.rows)
 
             serialsWithGenders.push(s)
