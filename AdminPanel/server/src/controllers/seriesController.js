@@ -1,13 +1,15 @@
 // this file for beanies logic
 const db = require("../database/db");
 const queries = require("../queries/seriesQueries");
+const filmsQueries = require("../queries/filmsQueries");
 const createError = require("../errors/createError");
 const tokenService = require("../service/tokenService")
 const {randomUUID} = require("crypto");
+const serialDTO = require("../models/serialDTO");
 
 class seriesController {
     async addSerial(req, res, next) {
-        const {poster, title, numEpisodes, ageRating, userRating, description} = req.body
+        const {poster, title, numEpisodes, ageRating, userRating, description,genres} = req.body
 
         const findOne = await db.query(queries.findSerial, [title])
         if (findOne.error)
@@ -16,7 +18,20 @@ class seriesController {
         if (findOne.rows.length !== 0)
             return next(new createError(400, `Serial with name ${title} already exist`));
 
-        const result = await db.query(queries.addSerial, [randomUUID(), poster, title, numEpisodes, ageRating, userRating, description])
+        const serialId = randomUUID()
+        // check genders
+        for (const genderName of genres) {
+            const findGender = await db.query(filmsQueries.findGender, [genreName])
+
+            if (findGender.rows.length === 0)
+                return next(new createError(500, `Gender with name ${genreName} not found`));
+        }
+        // add genders
+        for (const genreName of genres) {
+            await db.query(filmsQueries.addFilmGenre, [randomUUID(), genreName, serialId]);
+        }
+
+        const result = await db.query(queries.addSerial, [serialId, poster, title, numEpisodes, ageRating, userRating, description])
         if (result.error) return next(new createError(500, result.error));
 
         return res.status(200).json({
@@ -60,7 +75,30 @@ class seriesController {
     
     async getAllSerials(req, res, next) {
         const result = await db.query(queries.getAllSerials)
-        return res.status(200).json(result.rows)
+
+        const allSerials = result.rows;
+        if (allSerials.length === 0)
+            return next(new  createError(400,'Serials not founds'))
+
+        let serialsWithGenders = []
+
+        for (const film of allSerials) {
+
+            const s = new serialDTO()
+                .setId(film.Id)
+                .setTitle(film.Title)
+                .setPoster(film.Poster)
+                .setNumEpisodes(film.NumEpisodes)
+                .setAgeRation(film.AgeRating)
+                .setUserRating(film.UserRating)
+                .setDescriptions(film.Description)
+            const result = await db.query(filmsQueries.findAllGenreVideos,[s.Id])
+            s.setGenrers(result.rows)
+
+            serialsWithGenders.push(s)
+        }
+
+        return res.status(200).json(serialsWithGenders)
     }
 }
 
