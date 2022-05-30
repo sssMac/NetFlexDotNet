@@ -9,7 +9,7 @@ router.post("/addSerial", seriesController.addSerial);
 // router.post("/editSerial", seriesController.editSerial);
 router.post('/addSerial',seriesController.addSerial)
 router.post('/deleteSerial',seriesController.deleteSerial)
-router.post('/renameSerial',seriesController.renameSerial)
+router.post('/updateSerial',seriesController.updateSerial)
 router.get('/all',seriesController.getAllSerials)
 
 
