@@ -3,7 +3,6 @@ const db = require("../database/db");
 const queries = require("../queries/seriesQueries");
 const createError = require("../errors/createError");
 const tokenService = require("../service/tokenService")
-const serialDTO = require("../models/serialDTO")
 const {randomUUID} = require("crypto");
 
 class seriesController {

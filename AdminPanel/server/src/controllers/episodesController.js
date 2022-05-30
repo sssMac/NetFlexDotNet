@@ -1,9 +1,7 @@
 // this file for beanies logic
 const db = require("../database/db");
-const queries = require("../queries/episodesQueries");
+const queries = require("../queries/episodeQueries");
 const createError = require("../errors/createError");
-const tokenService = require("../service/tokenService")
-const episodeDTO = require("../models/episodeDTO")
 const {randomUUID} = require("crypto");
 
 class episodesController {
