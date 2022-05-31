@@ -12,7 +12,11 @@ open GiraffeAPI.Models.Subscription
 open GiraffeAPI.Models.Genre
 open GiraffeAPI.Models.Film
 open GiraffeAPI.Models.GenreVideo
+open GiraffeAPI.Models.Serial
+open GiraffeAPI.Models.Episode
+open GiraffeAPI.Models.UserSubscription
 open Microsoft.EntityFrameworkCore
+open GiraffeAPI.Models.Review
 open System.Linq
 
 type ApplicationContext(options : DbContextOptions<ApplicationContext>) = 
@@ -67,7 +71,30 @@ type ApplicationContext(options : DbContextOptions<ApplicationContext>) =
         member x.GenreVideos 
             with get() = x.genrevideo 
             and set v = x.genrevideo <- v
-              
+            
+        [<DefaultValue>]
+        val mutable review:DbSet<Review>
+        member x.Reviews 
+            with get() = x.review 
+            and set v = x.review <- v
+            
+        [<DefaultValue>]
+        val mutable serial:DbSet<Serial>
+        member x.Serials 
+            with get() = x.serial 
+            and set v = x.serial <- v
+            
+        [<DefaultValue>]
+        val mutable episode:DbSet<Episode>
+        member x.Episodes 
+            with get() = x.episode 
+            and set v = x.episode <- v
+        
+        [<DefaultValue>]
+        val mutable usersubscription:DbSet<UserSubscription>
+        member x.UserSubscriptions 
+            with get() = x.usersubscription 
+            and set v = x.usersubscription <- v
               
 module UserRetository = 
 
@@ -87,6 +114,13 @@ module UserRetository =
                     { UserId = entity.Id; RoleId = Guid.Parse("37050332-97c2-4fb9-a9cd-97b5c86b35d6") }
                 |]
             context.UserRoles.AddRangeAsync(userrole)
+            |> Async.AwaitTask
+            |> ignore
+            let usersub : UserSubscription[]=
+                [|
+                    { UserId = entity.Id; SubscriptionId = Guid.Parse("9cda4bf9-db72-4299-a7ec-dc608fb4e2c1");StartDate = DateTime.UtcNow;FinishDate = DateTime.MaxValue }
+                |]
+            context.UserSubscriptions.AddRangeAsync(usersub)
             |> Async.AwaitTask
             |> ignore
             let! result = context.SaveChangesAsync true |> Async.AwaitTask
@@ -118,6 +152,8 @@ module UserRetository =
         context.Users.Remove(current)
         let currentUserRole = context.UserRoles.Find(id)
         context.UserRoles.Remove(currentUserRole)
+        let currentSub = context.UserSubscriptions.Find(id)
+        context.UserSubscriptions.Remove(currentSub)
         if context.SaveChanges true  >= 1  then Some(current) else None
         
         // DONE
@@ -139,11 +175,7 @@ module UserRetository =
                 else None
             return result
         }
-        
-        
-        
-        
-        
+    
         
         
 module RoleRetository =
@@ -214,6 +246,12 @@ module SubscriptionsRepository =
         context.Subscriptions.Remove(current)
         if context.SaveChanges true  >= 1  then Some(current) else None
         
+    let updateUserSub (context : ApplicationContext) (entity : UserSubscription) =
+        let current = context.UserSubscriptions.Find(entity.UserId)
+        let updated = { entity with UserId = entity.UserId }
+        context.Entry(current).CurrentValues.SetValues(updated)
+        if context.SaveChanges true >= 1  then Some(updated) else None
+        
 module GenreRepository =
     
     let updateGenreName (context : ApplicationContext) (entity : Genre) (id : Guid) = 
@@ -271,6 +309,14 @@ module FilmRepository =
                         find (genreVideo.ContentId.Equals (id))
                 }
         context.GenreVideos.Remove(currentGenre)
+        let reviews =
+                query {
+                    for review in context.Reviews do
+                    where (review.ContentId = id)
+                    select review
+                }
+        for item in reviews do
+            context.Reviews.Remove(item)            
         if context.SaveChanges true  >= 1  then Some(current) else None
         
     let updateFilm (context : ApplicationContext) (entity : Film) (genre : string) = 
@@ -289,7 +335,165 @@ module FilmRepository =
         context.Entry(currentGenre).CurrentValues.SetValues(genreVideo[0])
         if context.SaveChanges true >= 1  then Some(updated) else None
     
+        
+        
     
+module ReviewRepository =
+    
+    let addReviewAsync (context : ApplicationContext) (entity : Review) = 
+        async {
+            context.Reviews.AddRangeAsync(entity)
+            |> Async.AwaitTask
+            |> ignore
+            let x = query {
+                 for review in context.Reviews do
+                 where (review.ContentId = entity.ContentId)
+                 select review
+            }
+            let mutable y = entity.Rating
+            let mutable z = 1.0
+            for item in x do
+                y <- y+item.Rating
+                z <- z+1.0
+            let current = context.Films.Find(entity.ContentId)
+            let updated : Film[]=
+                [|
+                    { Id = current.Id ; Title = current.Title; Poster = current.Poster; AgeRating = current.AgeRating; UserRating = y/z; Description=current.Description;VideoLink=current.VideoLink }
+                |]
+            context.Entry(current).CurrentValues.SetValues(updated[0])
+            let! result = context.SaveChangesAsync true |> Async.AwaitTask
+            let result = if result >= 1  then Some(entity) else None
+            return result
+        }
+        
+    let addReviewSerialAsync (context : ApplicationContext) (entity : Review) = 
+        async {
+            context.Reviews.AddRangeAsync(entity)
+            |> Async.AwaitTask
+            |> ignore
+            let x = query {
+                 for review in context.Reviews do
+                 where (review.ContentId = entity.ContentId)
+                 select review
+            }
+            let mutable y = entity.Rating
+            let mutable z = 1.0
+            for item in x do
+                y <- y+item.Rating
+                z <- z+1.0
+            let current = context.Serials.Find(entity.ContentId)
+            let updated : Serial[]=
+                [|
+                    { Id = current.Id; Poster=current.Poster; Title=current.Title;NumEpisodes=current.NumEpisodes;AgeRating=current.AgeRating;UserRating=y/z;Description=current.Description }
+                |]
+            context.Entry(current).CurrentValues.SetValues(updated[0])
+            let! result = context.SaveChangesAsync true |> Async.AwaitTask
+            let result = if result >= 1  then Some(entity) else None
+            return result
+        }
+        
+        
+    let getReview (context : ApplicationContext) (id : Guid) = context.Reviews |> Seq.tryFind (fun f -> f.Id = id)
+    
+    let getReviewByFilm (context : ApplicationContext) (id : Guid) =
+        let x =
+                query {
+                    for review in context.Reviews do
+                    where (review.ContentId = id)
+                    select review
+                }
+        if x <> null then Some(x)
+        else None
+        
+    let deleteReview (context:ApplicationContext) (id:Guid) =
+        let current = context.Reviews.Find(id)
+        context.Reviews.Remove(current)
+        if context.SaveChanges true  >= 1  then Some(current) else None
+        
+        
+module SerialRepository =
+    
+    let addSerialAsync (context : ApplicationContext) (entity : Serial) = 
+        async {
+            context.Serials.AddRangeAsync(entity)
+            |> Async.AwaitTask
+            |> ignore
+            let! result = context.SaveChangesAsync true |> Async.AwaitTask
+            let result = if result >= 1  then Some(entity) else None
+            return result
+        }
+        
+    let getAllSerials (context : ApplicationContext) = context.Serials
+    
+    let getSerial (context : ApplicationContext) id = context.serial |> Seq.tryFind (fun f -> f.Id = id)
+    
+    let deleteSerial (context:ApplicationContext) (id:Guid) =
+        let current = context.Serials.Find(id)
+        context.Serials.Remove(current)
+        let episodes =
+                query {
+                    for episode in context.Episodes do
+                    where (episode.SerialId = id)
+                    select episode
+                }
+        for item in episodes do
+            context.Episodes.Remove(item)
+        let reviews =
+                query {
+                    for review in context.Reviews do
+                    where (review.ContentId = id)
+                    select review
+                }
+        for item in reviews do
+            context.Reviews.Remove(item) 
+        if context.SaveChanges true  >= 1  then Some(current) else None
+        
+    let updateSerial (context : ApplicationContext) (entity : Serial) = 
+        let current = context.Serials.Find(entity.Id)
+        let updated = { entity with Id = entity.Id }
+        context.Entry(current).CurrentValues.SetValues(updated)
+        if context.SaveChanges true >= 1  then Some(updated) else None
+        
+    
+        
+    
+        
+        
+module EpisodeRepository =
+    
+    let addEpisodeAsync (context : ApplicationContext) (entity : Episode) = 
+        async {
+            context.Episodes.AddRangeAsync(entity)
+            |> Async.AwaitTask
+            |> ignore
+            let! result = context.SaveChangesAsync true |> Async.AwaitTask
+            let result = if result >= 1  then Some(entity) else None
+            return result
+        }
+        
+    let getEpisodesBySerial (context : ApplicationContext) (id : Guid) =
+        let x =
+                query {
+                    for episode in context.Episodes do
+                    where (episode.SerialId = id)
+                    select episode
+                }
+        if x <> null then Some(x)
+        else None
+        
+    let getEpisode (context : ApplicationContext) (id : Guid) = context.Episodes |> Seq.tryFind (fun f -> f.Id = id)
+    
+    let deleteEpisode (context:ApplicationContext) (id:Guid) =
+        let current = context.Episodes.Find(id)
+        context.Episodes.Remove(current)           
+        if context.SaveChanges true  >= 1  then Some(current) else None
+        
+    let updateEpisode (context : ApplicationContext) (entity : Episode) = 
+        let current = context.Episodes.Find(entity.Id)
+        let updated = { entity with Id = entity.Id }
+        context.Entry(current).CurrentValues.SetValues(updated)
+        if context.SaveChanges true >= 1  then Some(updated) else None
+        
         
 let getAll  = UserRetository.getAll 
 let getUser  = UserRetository.getUser
@@ -312,6 +516,7 @@ let getAllSub = SubscriptionsRepository.getAllSub
 let addSubAsync = SubscriptionsRepository.addSubAsync
 let updateSub = SubscriptionsRepository.updateSub
 let deleteSub = SubscriptionsRepository.deleteSub
+let updateUserSub = SubscriptionsRepository.updateUserSub
 
 let updateGenreName = GenreRepository.updateGenreName
 let getAllGenres = GenreRepository.getAllGenres
@@ -323,3 +528,21 @@ let getAllFilms = FilmRepository.getAllFilms
 let addFilmAsync = FilmRepository.addFilmAsync
 let deleteFilm = FilmRepository.deleteFilm
 let updateFilm = FilmRepository.updateFilm
+
+let addReviewAsync = ReviewRepository.addReviewAsync
+let getReview = ReviewRepository.getReview
+let getReviewByFilm = ReviewRepository.getReviewByFilm
+let deleteReview = ReviewRepository.deleteReview
+let addReviewSerialAsync = ReviewRepository.addReviewSerialAsync
+
+let addSerialAsync = SerialRepository.addSerialAsync
+let getAllSerials = SerialRepository.getAllSerials
+let getSerial = SerialRepository.getSerial
+let deleteSerial = SerialRepository.deleteSerial
+let updateSerial = SerialRepository.updateSerial
+
+let addEpisodeAsync = EpisodeRepository.addEpisodeAsync
+let getEpisodesBySerial = EpisodeRepository.getEpisodesBySerial
+let getEpisode = EpisodeRepository.getEpisode
+let deleteEpisode = EpisodeRepository.deleteEpisode
+let updateEpisode = EpisodeRepository.updateEpisode

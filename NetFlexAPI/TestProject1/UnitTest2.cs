@@ -374,15 +374,67 @@ public class UnitTest2
             Assert.Equal(expected, (string) jsonObject.roleName);
         }
         
+        
         [Theory]
-        [InlineData("55b4126a-d7a8-4d26-833c-303898f13018", "Ilya@gmail.com")]
+        [InlineData("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573", "[qwepqepq")]
+        public async Task DeleteFilmById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/film/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.videoLink);
+        }
+        
+        [Theory]
+        [InlineData("6253ccd7-7094-474f-8314-2d5d9e876dd6", "Ploho")]
+        public async Task DeleteReviewById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/review/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.text);
+        }
+        
+        [Theory]
+        [InlineData("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573", "adada")]
+        public async Task DeleteSerialwById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/serial/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.description);
+        }
+        
+        [Theory]
+        [InlineData("9fb1b7d6-67c5-4f70-8e2e-20f5445fa588", "Shootings")]
+        public async Task DeleteGenreById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/genre/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.genreName);
+        }
+        
+        [Theory]
+        [InlineData("d7edd297-e544-4e4d-aac1-4db068e904cf", "dadada")]
+        public async Task DeleteEpisodeById(Guid val1, string expected)
+        {
+            var response = await _client.DeleteAsync($"/API/episode/delete/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.previewVideo);
+        }
+        
+        [Theory]
+        [InlineData("d0d4ccff-7564-4714-92ce-d3422ed877d8", "Ilya@gmail.com")]
         public async Task DeleteUserById(Guid val1, string expected)
         {
             var response = await _client.DeleteAsync($"/API/user/delete/{val1}");
             var actual = await response.Content.ReadAsStringAsync();
             dynamic jsonObject = JObject.Parse(actual);
-            Assert.Equal(expected, (string) jsonObject.email);
+            Assert.Equal(expected, (string) jsonObject.userName);
         }
+        
         
     }
 }

@@ -15,8 +15,13 @@ open GiraffeAPI.Models.Genre
 open GiraffeAPI.Models.FilmCreateRequest
 open GiraffeAPI.Models.GenreCreate
 open GiraffeAPI.Models.FilmUpdate
-open GiraffeAPI.Models.Film
+open GiraffeAPI.Models.ReviewCreate
+open GiraffeAPI.Models.SerialCreate
+open GiraffeAPI.Models.EpisodeCreate
+open GiraffeAPI.Models.Serial
+open GiraffeAPI.Models.Episode
 open Microsoft.AspNetCore.Http
+open GiraffeAPI.Models.UserSubscriptionCreate
 open GiraffeAPI.JwtCreate
 open Giraffe
 open ApplicationContext
@@ -300,3 +305,162 @@ let FilmUpdateHandler : HttpHandler =
                         | Some l -> ctx.WriteJsonAsync l
                         | None -> (setStatusCode 400 >=> json "Film not updated") next ctx
         }
+        
+        
+let ReviewAddHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! review = ctx.BindJsonAsync<ReviewCreate>()
+            match review.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addReviewAsync context review.GetReview 
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "Review with this user made") next ctx
+                        }
+        
+let ReviewHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        getReview context id |> function
+            | Some l -> ctx.WriteJsonAsync l
+            | None -> (setStatusCode 404 >=> json "Review not find") next ctx
+            
+let ReviewsHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        getReviewByFilm context id |> function
+            | Some l -> ctx.WriteJsonAsync l
+            | None -> (setStatusCode 404 >=> json "Film with this id not find") next ctx
+            
+let ReviewDeleteHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        deleteReview context id |> function
+        | Some l -> ctx.WriteJsonAsync l
+        | None -> (setStatusCode 404 >=> json "Review not deleted") next ctx
+   
+let SerialAddHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! serial = ctx.BindJsonAsync<SerialCreate>()
+            match serial.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addSerialAsync context serial.GetSerial 
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "Genre with this name made") next ctx
+                        }
+
+
+        
+let SerialsHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            getAllSerials context |> ctx.WriteJsonAsync
+            
+let SerialHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        getSerial context id |> function
+            | Some l -> ctx.WriteJsonAsync l
+            | None -> (setStatusCode 404 >=> json "Serial not find") next ctx
+            
+let EpisodesHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        getEpisodesBySerial context id |> function
+            | Some l -> ctx.WriteJsonAsync l
+            | None -> (setStatusCode 404 >=> json "Serial with this id not find") next ctx
+            
+let EpisodeHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        getEpisode context id |> function
+            | Some l -> ctx.WriteJsonAsync l
+            | None -> (setStatusCode 404 >=> json "Episode not found") next ctx
+            
+let EpisodeAddHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! episode = ctx.BindJsonAsync<EpisodeCreate>()
+            match episode.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addEpisodeAsync context episode.GetEpisode 
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "Episode with this name made") next ctx
+                        }
+        
+let SerialDeleteHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        deleteSerial context id |> function
+        | Some l -> ctx.WriteJsonAsync l
+        | None -> (setStatusCode 404 >=> json "Serial not deleted") next ctx
+        
+let EpisodeDeleteHandler (id : Guid) = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+        deleteEpisode context id |> function
+        | Some l -> ctx.WriteJsonAsync l
+        | None -> (setStatusCode 404 >=> json "Episode not deleted") next ctx
+        
+let SerialUpdateHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! serial = ctx.BindJsonAsync<Serial>()
+            return! updateSerial context serial |> function
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "Serial not updated") next ctx
+        }
+        
+let EpisodeUpdateHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! episode = ctx.BindJsonAsync<Episode>()
+            return! updateEpisode context episode |> function
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "Episode not updated") next ctx
+        }
+        
+let UserSubUpdateHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! usersub = ctx.BindJsonAsync<UserSubscriptionCreate>()
+            match usersub.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! updateUserSub context usersub.GetSubscription |> function 
+                        | Some l -> ctx.WriteJsonAsync l
+                        | None -> (setStatusCode 400 >=> json "User subscription not updated") next ctx
+        }
+        
+let ReviewSerialAddHandler : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) -> 
+        task { 
+            let context = ctx.RequestServices.GetService(typeof<ApplicationContext>) :?> ApplicationContext
+            let! review = ctx.BindJsonAsync<ReviewCreate>()
+            match review.HasErrors with
+            | Some msg -> return! (setStatusCode 400 >=> json msg) next ctx
+            | None -> 
+                return! addReviewSerialAsync context review.GetReview 
+                        |> Async.RunSynchronously
+                        |> function 
+                        | Some l -> Successful.CREATED l next ctx
+                        | None -> (setStatusCode 400 >=> json "Review with this user made") next ctx
+                        }
+        
+        
