@@ -45,6 +45,30 @@ public class Utilities
             PasswordHash = "234432",
             IsBanned = false
         });
+        db.Users.Add(new GiraffeAPI.Models.User.User
+        {
+            Id = new Guid("d0d4ccff-7564-4714-92ce-d3422ed877d8"),
+            Avatar = "3",
+            UserName = "Ilya@gmail.com",
+            NormalizedUserName = "ILYA@GMAIL.COM",
+            Email = "Ilya@gmail.com",
+            NormalizedEmail = "ILYA@GMAIL.COM",
+            EmailConfirmed = false,
+            PasswordHash = "234432",
+            IsBanned = false
+        });
+        db.UserRoles.Add(new GiraffeAPI.Models.UserRole.UserRole()
+        {
+            UserId = new Guid("d0d4ccff-7564-4714-92ce-d3422ed877d8"),
+            RoleId = new Guid("37050332-97c2-4fb9-a9cd-97b5c86b35f9")
+        });
+        db.usersubscription.Add(new UserSubscription.UserSubscription()
+        {
+            UserId = new Guid("d0d4ccff-7564-4714-92ce-d3422ed877d8"),
+            SubscriptionId = new Guid("7b022eab-2e8a-4ae7-a1a3-409b3f942069"),
+            StartDate = DateTime.UtcNow,
+            FinishDate = DateTime.UtcNow
+        });
         db.Roles.Add(new GiraffeAPI.Models.Role.Role
         {
             RoleId = new Guid("37050332-97c2-4fb9-a9cd-97b5c86b35d6"),
@@ -86,6 +110,56 @@ public class Utilities
         {
             UserId = new Guid("55b4126a-d7a8-4d26-833c-303898f13018"),
             RoleId = new Guid("37050332-97c2-4fb9-a9cd-97b5c86b35d6")
+        });
+        db.Films.Add(new Film.Film()
+        {
+            Id = new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573"),
+            Title = "123",
+            Poster = "31231",
+            AgeRating = 18,
+            UserRating = 0.0,
+            Description = "123",
+            VideoLink = "[qwepqepq"
+        });
+        db.genrevideo.Add(new GenreVideo.GenreVideo()
+        {
+            Id = new Guid("8fb1b7d6-67c5-4f70-8e2e-20f5445fa589"),
+            GenreName = "Horror",
+            ContentId = new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573")
+        });
+        db.review.Add(new Review.Review()
+        {
+            Id = new Guid("6253ccd7-7094-474f-8314-2d5d9e876dd6"),
+            UserName = "Ilya@gmail.com",
+            ContentId = new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa574"),
+            Text ="Ploho",
+            Rating = 2.0,
+            PublishTime = DateTime.UtcNow
+        });
+        db.Serials.Add(new Serial.Serial()
+        {
+            Id = new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573"),
+            Poster = "dada",
+            Title ="dada",
+            NumEpisodes = 4,
+            AgeRating = 18,
+            UserRating = 0.0,
+            Description = "adada"
+        });
+        db.Genres.Add(new Genre.Genre()
+        {
+            Id = new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa588"),
+            GenreName = "Shootings"
+        });
+        db.Episodes.Add(new Episode.Episode()
+        {
+            Id = new Guid("d7edd297-e544-4e4d-aac1-4db068e904cf"),
+            Title ="dadadada",
+            SerialId =new Guid("179bf6d6-9402-4f2a-8047-7e4aacb6d389"),
+            Duration = 20,
+            Number = 1,
+            VideoLink ="dadada",
+            PreviewVideo = "dadada"
         });
         db.SaveChanges();
     }

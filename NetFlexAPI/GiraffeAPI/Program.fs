@@ -71,58 +71,80 @@ let webApp =
     choose [
         GET >=>
             choose [
-                route "/API/genre" >=> GenresHandler
+                
             ]
         GET >=>
             choose [
-                requireAdminRole >=> choose[
-                    // USERS
-                    routef "/API/user/%O" UserHandler // get users by id ok   TESTED 
-                    routef "/API/user/ban/%O" UserBanHandler // ban user  ok TESTED
-                    routef "/API/user/unban/%O" UserUnbanHandler // unban user ok TESTED
-                    route "/API/user" >=> UsersHandler //get all users ok
-                    // ROLES
-                    route "/API/role" >=> RolesHandler //get all roles ok
-                    routef "/API/role/%O" RoleHandler //get role ok   TESTED
-                    // SUBSCRIPIONS
-                    route "/API/sub" >=> SubsHandler //get all subscription ok 
-                    routef "/API/sub/%O" SubHandler //get subscription ok   TESTED
-                ]
+                // USERS
+                routef "/API/user/%O" UserHandler // TESTED
+                routef "/API/user/ban/%O" UserBanHandler // TESTED
+                routef "/API/user/unban/%O" UserUnbanHandler // TESTED
+                route "/API/user" >=> UsersHandler // 
+                // ROLES
+                route "/API/role" >=> RolesHandler //
+                routef "/API/role/%O" RoleHandler // TESTED
+                // SUBSCRIPIONS
+                route "/API/sub" >=> SubsHandler // 
+                routef "/API/sub/%O" SubHandler // TESTED
+                // GENRE
+                route "/API/genre" >=> GenresHandler
+                // FILMS
+                routef "/API/film/%O" FilmHandler // 
+                route "/API/film" >=> FilmsHandler //
+                // REVIEWS
+                routef "/API/review/%O" ReviewHandler // 
+                routef "/API/reviews/%O" ReviewsHandler //
             ]
         POST >=>
             choose [
+                // GENRES
                 route "/API/genre/update" >=> GenreUpdateNameHandler
                 route "/API/genre" >=> GenreAddHandler
-            ]
-        POST >=>
-            choose [
-                 requireAdminRole >=> choose[
-                     // USERS
-                     route "/API/user" >=>  userAddHandler  // add new user ok TESTED
-                     route "/API/user/update" >=>   UserUpdateHandler // update user ok TESTED
-                     //ROLES
-                     route "/API/role" >=>  RoleAddHandler // add new role ok TESTED
-                     route "/API/role/update" >=>  RoleUpdateHandler  // update role ok TESTED
-                     route "/API/userrole/update" >=>  UserRoleUpdateHandler  // update userrole ok TESTED
-                     // SUBSCRIPIONS
-                     route "/API/sub" >=>  SubAddHandler // add new subscription ok TESTED
-                     route "/API/sub/update" >=>  SubUpdateHandler  // update subscription ok TESTED
-                 ]
-                 route "/API/user/auth" >=> AuthHandler // Auth TESTED
+                // USERS
+                route "/API/user" >=>  userAddHandler  // TESTED
+                route "/API/user/update" >=>   UserUpdateHandler // TESTED
+                //ROLES
+                route "/API/role" >=>  RoleAddHandler // TESTED
+                route "/API/role/update" >=>  RoleUpdateHandler  // TESTED
+                route "/API/userrole/update" >=>  UserRoleUpdateHandler  // TESTED
+                // SUBSCRIPIONS
+                route "/API/sub" >=>  SubAddHandler // TESTED
+                route "/API/sub/update" >=>  SubUpdateHandler  // TESTED
+                route "/API/usersub/update" >=>  UserSubUpdateHandler  // 
+                // FILMS
+                route "/API/film" >=>  FilmAddHandler  // 
+                route "/API/film/update" >=>  FilmUpdateHandler  //
+                // REVIEWS
+                route "/API/review/film" >=>  ReviewAddHandler  //
+                route "/API/review/serial" >=> ReviewSerialAddHandler //
+                // SERIAL
+                route "/API/serial" >=>  SerialAddHandler  //
+                route "/API/serial/update" >=>  SerialUpdateHandler  // 
+                // EPISODES
+                route "/API/episode" >=>  EpisodeAddHandler //
+                route "/API/episode/update" >=>  EpisodeUpdateHandler  // 
+                
+                route "/API/user/auth" >=> AuthHandler // Auth TESTED
             ]
         DELETE >=>
             choose [
-                routef "/API/genre/delete/%O" GenreDeleteHandler
+                    // GENRES
+                routef "/API/genre/delete/%O" GenreDeleteHandler // TESTED
                     // USERS
-                routef "/API/user/delete/%O" UserDeleteHandler // delete user ok TESTED
+                routef "/API/user/delete/%O" UserDeleteHandler // TESTED
                     //ROLES
-                routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok TESTED
+                routef "/API/role/delete/%O" RoleDeleteHandler // TESTED
                     // SUBSCRIPTIONS
-                routef "/API/sub/delete/%O" SubDeleteHandler // delete subscription ok TESTED   
-            ]
-            
-            
-            
+                routef "/API/sub/delete/%O" SubDeleteHandler // TESTED
+                    // FILMS
+                routef "/API/film/delete/%O" FilmDeleteHandler // TESTED
+                    // REVIEWS
+                routef "/API/review/delete/%O" ReviewDeleteHandler // TESTED
+                    // SERIALS
+                routef "/API/serial/delete/%O" SerialDeleteHandler // TESTED
+                    // EPISODES
+                routef "/API/episode/delete/%O" EpisodeDeleteHandler // TESTED
+            ]            
         setStatusCode 404 >=> text "Not Found" ]
 
 // ---------------------------------
