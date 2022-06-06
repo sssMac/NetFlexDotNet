@@ -15,3 +15,5 @@ type Episode =
         VideoLink : string
         PreviewVideo : string
     }
+    
+    

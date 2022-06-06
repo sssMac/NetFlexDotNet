@@ -81,7 +81,7 @@ let webApp =
                 routef "/API/user/unban/%O" UserUnbanHandler // TESTED
                 route "/API/user" >=> UsersHandler // 
                 // ROLES
-                route "/API/role" >=> RolesHandler //
+                route "/API/role" >=> RolesHandler // 
                 routef "/API/role/%O" RoleHandler // TESTED
                 // SUBSCRIPIONS
                 route "/API/sub" >=> SubsHandler // 
@@ -89,17 +89,17 @@ let webApp =
                 // GENRE
                 route "/API/genre" >=> GenresHandler
                 // FILMS
-                routef "/API/film/%O" FilmHandler // 
+                routef "/API/film/%O" FilmHandler // TESTED
                 route "/API/film" >=> FilmsHandler //
                 // REVIEWS
-                routef "/API/review/%O" ReviewHandler // 
+                routef "/API/review/%O" ReviewHandler // TESTED
                 routef "/API/reviews/%O" ReviewsHandler //
             ]
         POST >=>
             choose [
                 // GENRES
-                route "/API/genre/update" >=> GenreUpdateNameHandler
-                route "/API/genre" >=> GenreAddHandler
+                route "/API/genre/update" >=> GenreUpdateNameHandler // TESTED
+                route "/API/genre" >=> GenreAddHandler // TESTED
                 // USERS
                 route "/API/user" >=>  userAddHandler  // TESTED
                 route "/API/user/update" >=>   UserUpdateHandler // TESTED
@@ -112,17 +112,17 @@ let webApp =
                 route "/API/sub/update" >=>  SubUpdateHandler  // TESTED
                 route "/API/usersub/update" >=>  UserSubUpdateHandler  // 
                 // FILMS
-                route "/API/film" >=>  FilmAddHandler  // 
+                route "/API/film" >=>  FilmAddHandler  // TESTED
                 route "/API/film/update" >=>  FilmUpdateHandler  //
                 // REVIEWS
-                route "/API/review/film" >=>  ReviewAddHandler  //
-                route "/API/review/serial" >=> ReviewSerialAddHandler //
+                route "/API/review/film" >=>  ReviewAddHandler  // 
+                route "/API/review/serial" >=> ReviewSerialAddHandler // 
                 // SERIAL
-                route "/API/serial" >=>  SerialAddHandler  //
-                route "/API/serial/update" >=>  SerialUpdateHandler  // 
+                route "/API/serial" >=>  SerialAddHandler  // TESTED
+                route "/API/serial/update" >=>  SerialUpdateHandler  //  
                 // EPISODES
-                route "/API/episode" >=>  EpisodeAddHandler //
-                route "/API/episode/update" >=>  EpisodeUpdateHandler  // 
+                route "/API/episode" >=>  EpisodeAddHandler // TESTED
+                route "/API/episode/update" >=>  EpisodeUpdateHandler  // NOT WORK
                 
                 route "/API/user/auth" >=> AuthHandler // Auth TESTED
             ]

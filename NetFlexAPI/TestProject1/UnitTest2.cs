@@ -20,6 +20,14 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.EntityFrameworkCore;
+using NetFlexAPI.Models;
+using TestProject1;
+using TestProject1.Models;
+using Episode = TestProject1.Episode;
+using EpisodeCreate = TestProject1.EpisodeCreate;
+using GenreCreate = TestProject1.GenreCreate;
+using Serial = TestProject1.Models.Serial;
+using SerialCreate = NetFlexAPI.Models.SerialCreate;
 
 namespace TestProject;
 
@@ -435,6 +443,122 @@ public class UnitTest2
             Assert.Equal(expected, (string) jsonObject.userName);
         }
         
+        [Theory]
+        [InlineData("Avatar","sdada","adada","dadada","dadada", "Avatar")]
+        public async Task CreateFilm(string title,string poster, string description,string videoLink,string genreName,string expected)
+        {
+            var sub = new CreateFilm(title,poster,description,videoLink,genreName);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/film", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.title);
+        }
+        
+        [Theory]
+        [InlineData("Alexey","sdada","acd8e0bd-b36b-4bed-93c4-e4d0e48b3f10",10.0,"Alexey")]
+        public async Task CreateReview(string userName,string text,Guid contentId,float rating,string expected)
+        {
+            var sub = new ReviewCreate(userName,contentId,text,rating);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/review/film", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.userName);
+        }
+        
+        [Theory]
+        [InlineData("dadap","Avatar",8,18,"very well","dadap")]
+        public async Task CreateSerial(string poster, string title, int numEpisodes, int ageRating, string description,string expected)
+        {
+            var sub = new SerialCreate(poster,title,numEpisodes,ageRating,description);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/serial", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.poster);
+        }
+        
+        [Theory]
+        [InlineData("Avatar","9fb1b7d6-67c5-4f70-8e2e-20f5445fa573",8,1,"very well","dadada","Avatar")]
+        public async Task CreateEpisode(string title,Guid serialId, int duration,int number, string videoLink, string previewVideo,string expected)
+        {
+            var sub = new EpisodeCreate(title, serialId,duration,number,videoLink,previewVideo);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/episode", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.title);
+        }
+        
+        [Theory]
+        [InlineData("Horror","Horror")]
+        public async Task CreateGenre(string genreName,string expected)
+        {
+            var sub = new GenreCreate(genreName);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/genre", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.genreName);
+        }
+        
+        [Theory]
+        [InlineData("757ada68-5c30-464e-8b84-fc1dccc5cc3d", "Hello")]
+        public async Task GetFilmByIdOK(Guid val1, string expected)
+        {
+            var response = await _client.GetAsync($"/API/film/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.title);
+        }
+        
+        [Theory]
+        [InlineData("12206271-6e1b-4483-a185-409ea2b25aad", "Horosho")]
+        public async Task GetReviewByIdOK(Guid val1, string expected)
+        {
+            var response = await _client.GetAsync($"/API/review/{val1}");
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.text);
+        }
+        
+        [Theory]
+        [InlineData("12d713a2-0c21-4252-8985-0db0c0d125ad", "LOL", "db514859-d99f-4525-b592-d398298e349d",88,2,"dadaw0123","wpeoqpeoq","LOL")]
+        public async Task UpdateEpisodeRole(Guid id,string title,Guid serialId, int duration, int number,string videoLink, string previewVideo, string expected)
+        {
+            var sub = new Episode(id, title, serialId, duration, number, videoLink, previewVideo);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/episode/update", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.title);
+        }
+        
+        [Theory]
+        [InlineData("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573", "LOL", "RER",5,6,10.0,"dadaw0123","LOL")]
+        public async Task UpdateSerialRole(Guid id,string poster, string title,int numEpisodes,int ageRating,float userRating, string description, string expected)
+        {
+            var sub = new Serial( id, poster, title, numEpisodes,ageRating,userRating,description);
+            string stringjson = JsonConvert.SerializeObject(sub);
+            var response = await _client.PostAsync("/API/serial/update", new StringContent(stringjson));
+            var actual = await response.Content.ReadAsStringAsync();
+            dynamic jsonObject = JObject.Parse(actual);
+            Assert.Equal(expected, (string) jsonObject.poster);
+        }
+        
+        // [Theory]
+        // [InlineData("d481d149-60d1-4853-96e1-32c8e9655171", "Students","300", null)]
+        // [InlineData("d481d149-60d1-4853-96e1-32c8e9655171", "Students", "200",null)]
+        // public async Task UpdateSubscription(Guid id, string name,string price, string expected)
+        // {
+        //     var sub = new Subscription(id,name, price);
+        //     string stringjson = JsonConvert.SerializeObject(sub);
+        //     var response = await _client.PostAsync("/API/sub/update", new StringContent(stringjson));
+        //     var actual = await response.Content.ReadAsStringAsync();
+        //     dynamic jsonObject = JObject.Parse(actual);
+        //     Assert.Equal(expected, (string) jsonObject.hasErrors);
+        // }
         
     }
 }

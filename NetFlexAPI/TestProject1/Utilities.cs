@@ -121,6 +121,16 @@ public class Utilities
             Description = "123",
             VideoLink = "[qwepqepq"
         });
+        db.Films.Add(new Film.Film()
+        {
+            Id = new Guid("757ada68-5c30-464e-8b84-fc1dccc5cc3d"),
+            Title = "Hello",
+            Poster = "adaweqr",
+            AgeRating = 18,
+            UserRating = 0.0,
+            Description = "qqwrqwrq",
+            VideoLink = "[qwepqepq"
+        });
         db.genrevideo.Add(new GenreVideo.GenreVideo()
         {
             Id = new Guid("8fb1b7d6-67c5-4f70-8e2e-20f5445fa589"),
@@ -134,6 +144,15 @@ public class Utilities
             ContentId = new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa574"),
             Text ="Ploho",
             Rating = 2.0,
+            PublishTime = DateTime.UtcNow
+        });
+        db.review.Add(new Review.Review()
+        {
+            Id = new Guid("12206271-6e1b-4483-a185-409ea2b25aad"),
+            UserName = "Rezeda@gmail.com",
+            ContentId = new Guid("757ada68-5c30-464e-8b84-fc1dccc5cc3d"),
+            Text ="Horosho",
+            Rating = 10.0,
             PublishTime = DateTime.UtcNow
         });
         db.Serials.Add(new Serial.Serial()
@@ -160,6 +179,46 @@ public class Utilities
             Number = 1,
             VideoLink ="dadada",
             PreviewVideo = "dadada"
+        });
+        db.Episodes.Add(new Episode.Episode()
+        {
+            Id = new Guid("4733e024-527a-4e74-865b-b1c9244d456d"),
+            Title ="dadadada",
+            SerialId =new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573"),
+            Duration = 20,
+            Number = 1,
+            VideoLink ="dadada",
+            PreviewVideo = "dadada"
+        });
+        db.Serials.Add(new Serial.Serial()
+        {
+            Id = new Guid("db514859-d99f-4525-b592-d398298e349d"),
+            Poster = "dada",
+            Title ="dada",
+            NumEpisodes = 4,
+            AgeRating = 18,
+            UserRating = 0.0,
+            Description = "adada"
+        });
+        db.Episodes.Add(new Episode.Episode()
+        {
+            Id = new Guid("12d713a2-0c21-4252-8985-0db0c0d125ad"),
+            Title ="dadadada",
+            SerialId =new Guid("db514859-d99f-4525-b592-d398298e349d"),
+            Duration = 20,
+            Number = 1,
+            VideoLink ="dadada",
+            PreviewVideo = "dadada"
+        });
+        db.Serials.Add(new Serial.Serial()
+        {
+            Id = new Guid("9fb1b7d6-67c5-4f70-8e2e-20f5445fa573"),
+            Poster = "dada",
+            Title ="dada",
+            NumEpisodes = 4,
+            AgeRating = 18,
+            UserRating = 0.0,
+            Description = "adada"
         });
         db.SaveChanges();
     }
