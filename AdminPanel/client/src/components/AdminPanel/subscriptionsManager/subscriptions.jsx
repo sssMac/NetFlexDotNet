@@ -42,6 +42,8 @@ const Subscriptions = () => {
         );
     };
 
+
+
     if(data != null){
         return (
             <div className='roleList'>
@@ -80,7 +82,7 @@ const Subscriptions = () => {
                                             <div className="text-primary color-light">{subscription.Name}</div>
                                         </td>
                                         <td>
-                                            <div className="text-primary color-light">{subscription.Cost}</div>
+                                            <div className="text-primary color-light">{subscription.Cost} $</div>
                                         </td>
 
                                         <td>

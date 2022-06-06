@@ -15,7 +15,7 @@ const Subscription = ({subscription,handleDelete,setModalActive}) => {
             <td>
                 <button className="button dark color-light"
                         onClick={() => {
-                            EditSubscription(subscription,setModalActive).then(r => r)
+                            EditSubscription(subscription,setModalActive)
                         }}>Edit
                 </button>
                 <button className="button dark color-light"

@@ -26,3 +26,14 @@ input:focus {
 .textbox {
     margin-bottom: 10px;
 }
+
+p {
+    color: red;
+    font-size: 30px;
+    padding: 10px;
+}
+
+p::before {
+    display: inline;
+    content: "⚠ ";
+}

@@ -653,3 +653,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,rider,webstorm,visualstudiocode,windows,macos,linux,database
 /.idea/
+/NetFlexAPI/GiraffeAPI/Properties/launchSettings.json
