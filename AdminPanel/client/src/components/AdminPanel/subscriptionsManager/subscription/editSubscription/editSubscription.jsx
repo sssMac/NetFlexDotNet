@@ -1,10 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {editSubscription} from "../../../../../actions/subscription";
-import { ErrorMessage } from "@hookform/error-message";
-import _ from "lodash/fp";
 import "../input.css"
 import {useForm} from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
+const schema = yup.object().shape({
+        name: yup.string().required(),
+        price: yup.string().required().matches(/^(0|[1-9]\d*)([.]\d+)?/, "Invalid value "),
+    });
 
 const EditSubscription = ({subscription,setModalActive}) => {
     const [newName, setNewName] = useState('')
@@ -12,46 +16,33 @@ const EditSubscription = ({subscription,setModalActive}) => {
     console.log(subscription)
 
 
-    const { watch, register, handleSubmit, formState: { errors }, setValue } = useForm({
-        defaultValues: {
-            name: "",
-            price: "",
-        }
+    const { register, handleSubmit, errors } = useForm({
+        resolver: yupResolver(schema),
     });
-    const [name, price] = watch(["name", "price"]);
-
-    useEffect(() => {
-        setValue("name", `${subscription.Name}`)
-        setValue("price", `${subscription.Price}`)
-
-    }, [subscription, name, price])
 
 
     const onSubmit = data => console.log(data);
-
+    console.log(errors)
     return (
         <div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="textbox">
                     <input type="text"
+                           name="name"
                            placeholder="Name"
-                           {...register("name", {required: true, maxLength: 25})} />
+                           value={newName}
+                           onChange={(e) => setNewName(e.target.value)}
+                           ref={register} />
                 </div>
+
                 <div className="textbox">
-                    <input type="number" placeholder="Price" {...register("price", {required: true, min: 0, pattern: /^[0-9]+(\.[0-9][0-9])?/i})} />
+                    <input type="number"
+                           name="price"
+                           placeholder="Price"
+                           value={newCost}
+                           onChange={(e) => setNewCost(e.target.value)}
+                           ref={register}/>
                 </div>
-                <ErrorMessage
-                    errors={errors}
-                    name="multipleErrorInput"
-                    render={({ messages }) => {
-                        console.log("messages", messages);
-                        return messages
-                            ? _.entries(messages).map(([type, message]: [string, string]) => (
-                                <p key={type}>{message}</p>
-                            ))
-                            : null;
-                    }}
-                />
 
                 <button className="button dark color-red" onClick={() => {
                     setModalActive(false)
@@ -59,8 +50,8 @@ const EditSubscription = ({subscription,setModalActive}) => {
                 </button>
 
                 <button className="button dark color-green" onClick={() => {
-                    setModalActive(false)
-                    editSubscription(subscription.Id, newName, newCost).then(r => r)
+                    //setModalActive(false)
+                    //editSubscription(subscription.Id, newName, newCost).then(r => r)
                 }}> Submit
                 </button>
             </form>

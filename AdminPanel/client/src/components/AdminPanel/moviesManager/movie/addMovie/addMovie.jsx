@@ -1,58 +1,146 @@
-import React, {useState} from 'react';
-import {useSelector} from "react-redux";
-import Input from "../../../../../utils/input/Input";
-import {publicReview} from "../../../../../actions/review";
-import {useForm} from "react-hook-form";
+import React, {useEffect} from 'react';
+import * as yup from "yup";
+import {useFormik} from "formik";
+import {addFilm} from "../../../../../actions/film";
 
-const AddMovie = ({setModalActive}) => {
-    const [textReview, setTextReview] = useState("")
-    const [contentId, setContentId] = useState("")
-    const [rating, setRating] = useState(0)
+const AddMovie = ({setModalActive, genres}) => {
+    const formik = useFormik({
+        initialValues:{
+            title: "",
+            poster: "",
+            description:"",
+            ageRating: "",
+            videoLink: "",
+            genres: [],
 
-    const handleChange = (e) => {
-        setTextReview('')
-        setContentId('')
-        setRating(0)
-    }
+        },validationSchema: yup.object({
+            title: yup.string().required("*").max(50),
+            poster: yup.string().required("*"),
+            description: yup.string().required("*"),
+            ageRating: yup.string().required("*"),
+            videoLink: yup.string().required("*"),
+            genres: []
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const onSubmit = data => console.log(data);
-    console.log(errors);
+        }),
+        onSubmit:({title, description, ageRating,videoLink, poster,genresCheck}) => {
+            console.log({title, description, genresCheck});
+            //addFilm(poster,title,0,ageRating,0,description,videoLink,poster,genresCheck)
+            setModalActive(false)
+            formik.resetForm();
+        }
+    })
 
     return (
-        <div>
-            <div>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <input type="text" placeholder="Title" {...register("Title", {required: true, maxLength: 50})} />
-                    <textarea {...register("Description", {required: true, maxLength: 500})} />
-                    <input type="url" placeholder="Poster" {...register("Poster", {required: true})} />
-                    <select {...register("AgeRating", { required: true })}>
+            <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+                <div className="heading color-secondary-dark">ADD MOVIE</div>
+                    <div className="block color-dark" data-label="Title">
+                        <input
+                            className="modal_input"
+                            type="text"
+                            placeholder="Title"
+                            name="title"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.title}
+                            autoComplete="off"
+
+                        />
+                        <div className="validation">
+                            <div className="color-danger">
+                                {formik.touched.title && formik.errors.title ? (
+                                    formik.errors.title
+                                ) : null}
+                            </div>
+                        </div>
+                    </div>
+                <div className="block color-dark" data-label="Poster">
+                    <input
+                        className="modal_input"
+                        type="url"
+                        placeholder="Poster"
+                        name="poster"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.poster}
+                    />
+                    <div className="validation">
+                        <div className="color-danger">
+                            {formik.touched.poster && formik.errors.poster ? (
+                                formik.errors.poster
+                            ) : null}
+                        </div>
+                    </div>
+                </div>
+                    <div className="block" label="Description">
+                        <textarea
+                            className="modal_input"
+                            placeholder="Description"
+                            name="description"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.description}
+                        />
+                        <div className="validation">
+                            <div className="color-danger">
+                                {formik.touched.description && formik.errors.description ? (
+                                    formik.errors.description
+                                ) : null}
+                            </div>
+                        </div>
+                    </div>
+                <div className="block" label="Age rating">
+                    <select
+                        className="modal_input"
+                        placeholder="Age Rating"
+                        name="ageRating"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.ageRating}
+                    >
+                        <option value="" label='Choose rating...'> </option>
                         <option value="0">0+</option>
                         <option value="6">6+</option>
                         <option value="12">12+</option>
                         <option value="18">18+</option>
                     </select>
-                    <input type="url" placeholder="VideoLink" {...register("VideoLink", {required: true})} />
+                    <div className="validation">
+                        <div className="color-danger">
+                            {formik.touched.ageRating && formik.errors.ageRating ? (
+                                formik.errors.ageRating
+                            ) : null}
+                        </div>
+                    </div>
+                </div>
+                <div className="block" label="genres">
+                    <div className="modal_checkbox_wrapper">
+                            {
+                                genres.map((genre) => (
+                                    <div key={genre.Id} className="modal_checkbox">
+                                        <input  name="genresCheck"
+                                                id={genre.Id}
+                                                type="checkbox"
+                                                value={genre.value}
+                                                checked={genre.value}
+                                                onChange={formik.handleChange}
+                                                onBlur={formik.handleBlur}
+                                        />
+                                        <div className="label">{genre.GenreName}</div>
+                                    </div>
+                                ))
+                            }
+                    </div>
+                </div>
 
-                    <button className="button dark color-red" onClick={() => {
-                        setModalActive(false)
-                        handleChange()
-                    }}> Cancel
-                    </button>
+                <button type="submit" className="button dark color-green" onClick={() => {
+                }}> Submit
+                </button>
 
-                    <button className="button dark color-green" onClick={() => {
-                        setModalActive(false)
-                    }}> Create
-                    </button>
-                </form>
-
-
-
-
-
-            </div>
-        </div>
-    );
+                <button type="reset" className="button dark color-red" onClick={() => {
+                    formik.resetForm();
+                }}> Reset
+                </button>
+            </form>
+    )
 };
 
 export default AddMovie;

@@ -10,7 +10,7 @@ input {
     z-index: 2;
     transition: .1s ease-in-out;
     top: 6px;
-    font-size: 12pt;
+    font-size: 50px;
     font-weight: 500;
     color: #eeee;
     background: rgba(0, 0, 0, .75);
@@ -31,9 +31,4 @@ p {
     color: red;
     font-size: 30px;
     padding: 10px;
-}
-
-p::before {
-    display: inline;
-    content: "⚠ ";
 }

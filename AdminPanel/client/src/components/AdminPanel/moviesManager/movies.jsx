@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import Modal from "../../../utils/modal/modal";
 import Movie from "./movie/movie";
 import AddMovie from "./movie/addMovie/addMovie";
+import Modal from "../../../utils/modal/modal";
 
 const Movies = () => {
-    const [data, setData] = useState([]);
     const [modalActive, setModalActive] = useState(false)
     const [modalChild, setModalChild] = useState(<div/>)
+    const [data, setData] = useState([]);
+    const [genres, setGenres] = useState([])
     const [buttonClick, setButtonClicked] = useState(false)
 
 
@@ -25,6 +26,25 @@ const Movies = () => {
 
             }
             fetchMovie().then(r => r);
+            setButtonClicked(false)
+        }
+        catch (e){
+
+        }
+
+        try{
+            async function fetchGenres(){
+                let response = await fetch("http://localhost:5000/genre/all", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setGenres(res))
+
+            }
+            fetchGenres().then(r => r);
             setButtonClicked(false)
         }
         catch (e){
@@ -58,7 +78,7 @@ const Movies = () => {
                             <div className="text-secondary shadow">Manager</div>
                             <button className="button dark color-light" onClick={() => {
                                 setModalActive(true)
-                                setModalChild(<AddMovie setActive={setModalActive}/>)
+                                setModalChild(<AddMovie setActive={setModalActive} genres={genres}/>)
                             }}> Add Movie </button>
                             <button className="button dark color-light" onClick={() => setButtonClicked(true)}> Refresh </button>
                         </div>

@@ -1,56 +1,230 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
+*.text-secondary {
+  font-weight: 300;
+  color: #666;
+  font-size: 10pt;
+}
+
+*.text-primary {
+  font-weight: 500;
+  font-size: 14pt;
+}
+
+*.color-light {
+  color: #ccc;
+}
+
+*.color-dark {
+  color: #222;
+}
+
+*.color-primary-dark {
+  color: #2d3233;
+}
+
+*.color-secondary-dark {
+  color: #3e4345;
+}
+
+*.color-orange {
+  color: #FF9800;
+}
+
+*.color-yellow {
+  color: #FFEE58;
+}
+
+*.color-blue {
+  color: #42A5F5;
+}
+
+*.color-magenta {
+  color: #7986CB;
+}
+
+*.color-green {
+  color: #66BB6A;
+}
+
+*.color-red {
+  color: #F44336;
+}
+
+*.color-info {
+  color: #607D8B;
+}
+
+*.color-warning {
+  color: #FF8F00;
+}
+
+*.color-danger {
+  color: #FF3D00;
+}
+
+*.bg-light {
+  background-color: #ccc;
+}
+
+*.bg-dark {
+  background-color: #222;
+}
+
+*.bg-primary-dark {
+  background-color: #2d3233;
+}
+
+*.bg-secondary-dark {
+  background-color: #3e4345;
+}
+
+*.bg-orange {
+  background-color: #FF9800;
+}
+
+*.bg-yellow {
+  background-color: #FFEE58;
+}
+
+*.bg-blue {
+  background-color: #42A5F5;
+}
+
+*.bg-magenta {
+  background-color: #7986CB;
+}
+
+*.bg-green {
+  background-color: #66BB6A;
+}
+
+*.bg-red {
+  background-color: #F44336;
+}
+
+*.bg-info {
+  background-color: #607D8B;
+}
+
+*.bg-warning {
+  background-color: #FF8F00;
+}
+
+*.bg-danger {
+  background-color: #FF3D00;
+}
+
 .modal {
-  height: 100vh;
-  width: 100vw;
-  background-color: rgba(0,0,0,0.4);
-  position: fixed;
   top: 0;
   left: 0;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: #00000066;
   display: flex;
-  align-items: center;
   justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s;
-  z-index: 9999;
-
-  &.active{
-    pointer-events: all;
-    opacity: 1;
-
-  }
-}
-
-.modal__content{
-  min-width: 40vw;
-  min-height: 40vh;
-  transform: scale(0.5);
+  align-items: center;
   transition: 0.4s all;
-  background-color: #2d3233;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50px;
+  pointer-events: none;
+  opacity: 0;
+}
+.modal.active {
+  pointer-events: all;
+  opacity: 1;
+}
+.modal.active .modal_wrapper {
+  transform: scale(1);
+  pointer-events: all;
+}
+.modal .modal_wrapper {
+  pointer-events: none;
+  transition: 1s all;
+  transform: scale(0);
+  font-family: "Noto Sans", sans-serif;
+  width: 40%;
+  border-radius: 20px;
   padding: 20px;
+  box-sizing: border-box;
+}
+.modal .modal_wrapper .heading {
+  font-size: 14pt;
+  font-weight: 600;
+  margin-bottom: 10px;
+  margin: 10px;
+  padding-left: 0 !important;
+}
+.modal .modal_wrapper .horizontal {
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+.modal .modal_wrapper .block {
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+.modal .modal_wrapper .block .validation {
+  padding: 10px;
+  width: calc(100% - 20px);
+  margin-top: -10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.modal .modal_wrapper .block textarea {
+  resize: none;
+}
+.modal .modal_wrapper .block[label] {
+  margin-top: 20px;
+}
+.modal .modal_wrapper .block[label]:before {
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 10px;
+  font-size: 8pt;
+  box-sizing: border-box;
+  content: attr(label);
+  position: absolute;
+  top: -20px;
+  left: 0;
+  color: #666;
+}
+.modal .modal_wrapper .modal_input {
+  outline: none;
+  border: none;
+  background: #eee;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  margin: 10px;
+  position: relative;
+  width: calc(100% - 20px);
+  border-radius: 5px;
+  height: auto !important;
+  color: #2d3233;
+}
+.modal .modal_wrapper .modal_checkbox_wrapper {
+  position: relative;
+  width: calc(100% - 20px);
+  padding: 10px;
+  overflow: auto;
+}
+.modal .modal_wrapper .modal_checkbox_wrapper:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.modal .modal_wrapper .modal_checkbox_wrapper .modal_checkbox {
+  float: left;
+  width: 25%;
+  padding: 10px;
+  display: flex;
 
-  .active{
-    transform: scale(1);
-  }
-
-  button{
-    margin-top: 30px;
-    font-size: 30px !important;
-    float: right;
-  }
-  Input {
-    font-size: 50px !important;
+  input{
+    top: 0 !important;
+    width: auto !important;
+    height: auto !important;
   }
 }
-
-.modal__head{
-  color: white;
-  font-size: 41px;
+.modal .modal_wrapper .modal_checkbox_wrapper .modal_checkbox .label {
+  padding-left: 5px;
 }
-
-
-
-

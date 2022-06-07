@@ -10,7 +10,6 @@ export const addSubscription = async (name, cost) => {
             }
         );
     } catch (e) {
-        alert(e);
     }
 }
 

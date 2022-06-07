@@ -15,6 +15,9 @@ const AddSubscription = ({setActive}) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setFormErrors(validate(formValues));
+        if (formErrors === {}){
+            setActive(false)
+        }
         setIsSubmit(true);
     };
 
@@ -27,13 +30,13 @@ const AddSubscription = ({setActive}) => {
 
     const validate = (values) => {
         const errors = {};
-        const regex = /^[0-9]+(\.[0-9][0-9])?/i;
+        const regex = /^(0|[1-9]\d*)([.]\d+)?/i;
         if (!values.name) {
             errors.name = "Name is required!";
         }
         if (!values.price) {
             errors.price = "Price is required!";
-        } else if (!regex.test(values.price) || values.price < 0) {
+        } else if (regex.test(values.price) || values.price < 0) {
             errors.price = "This is not a valid price format!";
         }
         return errors;
@@ -45,11 +48,11 @@ const AddSubscription = ({setActive}) => {
                 <input
                     type="text"
                     name="name"
-                    placeholder="Username"
+                    placeholder="Name"
                     value={formValues.name}
                     onChange={handleChange}
                 />
-                {!formErrors ? <p>{formErrors.name}</p> : <div/>}
+                <p>{formErrors.name}</p>
 
                 <input
                     type="number"
@@ -59,7 +62,7 @@ const AddSubscription = ({setActive}) => {
                     onChange={handleChange}
                     min={0}
                 />
-                {!formErrors ? <p>{formErrors.price}</p> : <div/>}
+                <p>{formErrors.price}</p>
 
                 <button className="button dark color-red" onClick={() => {
                     setActive(false)
@@ -67,10 +70,7 @@ const AddSubscription = ({setActive}) => {
                 </button>
 
                 <button className="button dark color-green" onClick={() => {
-                    if(!formErrors) {
-                        setActive(false)
-                        addSubscription(formValues.name,formValues.price).then(r => r)
-                    }
+                    addSubscription(formValues.name,formValues.price).then(r => r)
                 }}> Create
                 </button>
             </form>

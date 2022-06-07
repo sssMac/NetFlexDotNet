@@ -18,6 +18,7 @@ import Genres from "./AdminPanel/genresManager/genres";
 import Subscriptions from "./AdminPanel/subscriptionsManager/subscriptions";
 import AuthorizePanel from "./AuthorizePanel/AuthorizePanel";
 import Reviews from "./AdminPanel/reviewsManager/reviews";
+import Modal from "../utils/modal/modal";
 
 
 
