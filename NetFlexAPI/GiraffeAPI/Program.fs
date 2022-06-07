@@ -71,58 +71,95 @@ let webApp =
     choose [
         GET >=>
             choose [
-                route "/API/genre" >=> GenresHandler
+                // FILMS
+                routef "/API/film/%O" FilmHandler 
+                route "/API/film" >=> FilmsHandler 
+                // REVIEWS
+                routef "/API/review/%O" ReviewHandler 
+                routef "/API/reviews/%O" ReviewsHandler                
+                
+                routef "/API/sub/%O" SubHandler 
+                
+                routef "/API/user/%O" UserHandler 
             ]
         GET >=>
             choose [
                 requireAdminRole >=> choose[
                     // USERS
-                    routef "/API/user/%O" UserHandler // get users by id ok   TESTED 
-                    routef "/API/user/ban/%O" UserBanHandler // ban user  ok TESTED
-                    routef "/API/user/unban/%O" UserUnbanHandler // unban user ok TESTED
-                    route "/API/user" >=> UsersHandler //get all users ok
+                    routef "/API/user/ban/%O" UserBanHandler 
+                    routef "/API/user/unban/%O" UserUnbanHandler 
+                    route "/API/user" >=> UsersHandler 
                     // ROLES
-                    route "/API/role" >=> RolesHandler //get all roles ok
-                    routef "/API/role/%O" RoleHandler //get role ok   TESTED
+                    route "/API/role" >=> RolesHandler
+                    routef "/API/role/%O" RoleHandler 
                     // SUBSCRIPIONS
-                    route "/API/sub" >=> SubsHandler //get all subscription ok 
-                    routef "/API/sub/%O" SubHandler //get subscription ok   TESTED
+                    route "/API/sub" >=> SubsHandler 
+                    // GENRE
+                    route "/API/genre" >=> GenresHandler                
                 ]
             ]
         POST >=>
             choose [
-                route "/API/genre/update" >=> GenreUpdateNameHandler
-                route "/API/genre" >=> GenreAddHandler
+                  
+                // REVIEWS
+                route "/API/review/film" >=>  ReviewAddHandler  
+                route "/API/review/serial" >=> ReviewSerialAddHandler 
+                
             ]
         POST >=>
             choose [
                  requireAdminRole >=> choose[
-                     // USERS
-                     route "/API/user" >=>  userAddHandler  // add new user ok TESTED
-                     route "/API/user/update" >=>   UserUpdateHandler // update user ok TESTED
-                     //ROLES
-                     route "/API/role" >=>  RoleAddHandler // add new role ok TESTED
-                     route "/API/role/update" >=>  RoleUpdateHandler  // update role ok TESTED
-                     route "/API/userrole/update" >=>  UserRoleUpdateHandler  // update userrole ok TESTED
-                     // SUBSCRIPIONS
-                     route "/API/sub" >=>  SubAddHandler // add new subscription ok TESTED
-                     route "/API/sub/update" >=>  SubUpdateHandler  // update subscription ok TESTED
+                     // GENRES
+                    route "/API/genre/update" >=> GenreUpdateNameHandler 
+                    route "/API/genre" >=> GenreAddHandler 
+                    // USERS
+                    route "/API/user" >=>  userAddHandler  
+                    route "/API/user/update" >=>   UserUpdateHandler 
+                    //ROLES
+                    route "/API/role" >=>  RoleAddHandler 
+                    route "/API/role/update" >=>  RoleUpdateHandler  
+                    route "/API/userrole/update" >=>  UserRoleUpdateHandler  
+                    // SUBSCRIPIONS
+                    route "/API/sub" >=>  SubAddHandler 
+                    route "/API/sub/update" >=>  SubUpdateHandler  
+                    route "/API/usersub/update" >=>  UserSubUpdateHandler  
+                    // FILMS
+                    route "/API/film" >=>  FilmAddHandler  
+                    route "/API/film/update" >=>  FilmUpdateHandler
+                    // SERIAL
+                    route "/API/serial" >=>  SerialAddHandler  
+                    route "/API/serial/update" >=>  SerialUpdateHandler  
+                    // EPISODES
+                    route "/API/episode" >=>  EpisodeAddHandler 
+                    route "/API/episode/update" >=>  EpisodeUpdateHandler 
+                
+                    route "/API/user/auth" >=> AuthHandler 
                  ]
-                 route "/API/user/auth" >=> AuthHandler // Auth TESTED
             ]
         DELETE >=>
             choose [
-                routef "/API/genre/delete/%O" GenreDeleteHandler
-                    // USERS
-                routef "/API/user/delete/%O" UserDeleteHandler // delete user ok TESTED
-                    //ROLES
-                routef "/API/role/delete/%O" RoleDeleteHandler // delete role ok TESTED
-                    // SUBSCRIPTIONS
-                routef "/API/sub/delete/%O" SubDeleteHandler // delete subscription ok TESTED   
+                // REVIEWS
+                routef "/API/review/delete/%O" ReviewDeleteHandler   
             ]
-            
-            
-            
+        DELETE >=>
+            choose [
+                 requireAdminRole >=> choose[
+                     // GENRES
+                    routef "/API/genre/delete/%O" GenreDeleteHandler 
+                    // USERS
+                    routef "/API/user/delete/%O" UserDeleteHandler 
+                    //ROLES
+                    routef "/API/role/delete/%O" RoleDeleteHandler 
+                    // SUBSCRIPTIONS
+                    routef "/API/sub/delete/%O" SubDeleteHandler 
+                    // FILMS
+                    routef "/API/film/delete/%O" FilmDeleteHandler 
+                    // SERIALS
+                    routef "/API/serial/delete/%O" SerialDeleteHandler 
+                    // EPISODES
+                    routef "/API/episode/delete/%O" EpisodeDeleteHandler
+                 ]    
+            ]            
         setStatusCode 404 >=> text "Not Found" ]
 
 // ---------------------------------
