@@ -5,27 +5,27 @@ import axios from "axios";
 import './CustomSelect.scss'
 import Select from "react-select";
 import {assignRole} from "../../../../actions/role";
+import {setSubscription} from "../../../../actions/subscription";
 
 const User = ({user, roles, refresh}) => {
     const [currentRole, setCurrentRole] = useState(user.Roles[0].Name)
     const dispatch = useDispatch()
-    const emailCong = String(user.EmailConfirmed)
 
-    const options = []
+    const optionsRoles = []
 
-    roles.map(r => options.push({
+    roles.map(r => optionsRoles.push({
         value: r.Name,
         label: r.Name
     }))
 
 
 
-    const onChange = (newRole) => {
+    const onChangeRole = async (newRole) => {
         setCurrentRole(newRole)
-        assignRole(user.Id, roles.find(r => r.Name === newRole.value).Id).then(r => r)
+        await assignRole(user.Id, roles.find(r => r.Name === newRole.value).Id)
     }
     const getRole = () => {
-        return currentRole ? options.find(r => r.value === currentRole) : ''
+        return currentRole ? optionsRoles.find(r => r.value === currentRole) : ''
     }
 
     return (
@@ -41,7 +41,7 @@ const User = ({user, roles, refresh}) => {
                 <div className="text-secondary">{user.Email}</div>
             </td>
             <td>
-                <Select classNamePrefix='custom-select' onChange={onChange} value={getRole()} options={options}/>
+                <Select classNamePrefix='custom-select' onChange={onChangeRole} value={getRole()} options={optionsRoles}/>
                 <div className="text-secondary">{user.Roles[0].Name}</div>
             </td>
             <td>

@@ -11,12 +11,12 @@ class filmsController {
         const findFilm = await db.query(queries.findFilm, [title])
         if (findFilm.error)
             return next(new createError(400, findFilm.error));
-        if (findOne.rows.length !== 0)
+        if (findFilm.rows.length !== 0)
             return next(new createError(500, `Film with name ${title} already exist`));
 
         const generatedUUID = randomUUID()
         // check genders
-        for (const genderName of genres) {
+        for (const genreName of genres) {
             const findGender = await db.query(queries.findGender, [genreName])
 
             if (findGender.rows.length === 0)
@@ -56,17 +56,44 @@ class filmsController {
     }
 
     async updateFilm(req, res, next) {
-        const {id, poster, title, duration, ageRating, userRating, description, videoLink, preview} = req.body
+        const {id, poster, title, duration, ageRating, userRating, description, videoLink, preview, genres} = req.body
 
-        const findOne = await db.query(queries.findFilmById, [id])
+        const findOneDelete = await db.query(queries.findFilmById, [id])
 
-        if (findOne.rows.length === 0)
+        if (findOneDelete.rows.length === 0)
             return next(new createError(404, `Not found film!!`));
 
-        const result = await db.query(queries.updateFilm, [id, poster, title, duration, ageRating, userRating, description, videoLink, preview])
-        if (result.error) return next(new createError(500, result.error));
-        // const genreNameUpdateResult = await db.query(queries.updateFilmGenre, [id, genreName])
-        // if (genreNameUpdateResult.error) return next(new createError(500, result.error));
+        const result = await db.query(queries.deleteFilm, [id])
+        if (result.error) return next(new createError(500, 'Error deleting film!'));
+        const filmGenreDeleteResult = await db.query(queries.deleteFilmGenre, [id])
+        if (filmGenreDeleteResult.error) return next(new createError(500, 'Error deleting film!'));
+
+        const findFilm = await db.query(queries.findFilm, [title])
+        if (findFilm.error)
+            return next(new createError(400, findFilm.error));
+        if (findFilm.rows.length !== 0)
+            return next(new createError(500, `Film with name ${title} already exist`));
+
+        // check genders
+        for (const genreName of genres) {
+            const findGender = await db.query(queries.findGender, [genreName])
+
+            if (findGender.rows.length === 0)
+                return next(new createError(500, `Gender with name ${genreName} not found`));
+        }
+        // add genders
+        for (const genreName of genres) {
+            await db.query(queries.addFilmGenre, [randomUUID(), genreName, id]);
+        }
+        // add film
+        const filmAddResult = await db.query(queries.addFilm, [id, poster, title, duration, ageRating, userRating, description, videoLink, preview])
+        if (filmAddResult.error)
+            return next(new createError(500, filmAddResult.error));
+
+        return res.status(200).json({
+            message: `Film with name ${title} and genres added`
+        })
+
 
         return res.status(200).json({
             message: `Film and genre updated`

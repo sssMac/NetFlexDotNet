@@ -2,6 +2,11 @@ import React, {useEffect, useState} from 'react';
 import Movie from "./movie/movie";
 import AddMovie from "./movie/addMovie/addMovie";
 import Modal from "../../../utils/modal/modal";
+import EditSubscription from "../subscriptionsManager/subscription/editSubscription/editSubscription";
+import {removeSubscription} from "../../../actions/subscription";
+import EditMovie from "./movie/editMovie/editMovie";
+import {deleteFilm} from "../../../actions/film";
+import ReactPlayer from "react-player";
 
 const Movies = () => {
     const [modalActive, setModalActive] = useState(false)
@@ -9,6 +14,7 @@ const Movies = () => {
     const [data, setData] = useState([]);
     const [genres, setGenres] = useState([])
     const [buttonClick, setButtonClicked] = useState(false)
+    const [acceptedReviews, setAcceptedReviews] = useState([])
 
 
 
@@ -26,13 +32,7 @@ const Movies = () => {
 
             }
             fetchMovie().then(r => r);
-            setButtonClicked(false)
-        }
-        catch (e){
 
-        }
-
-        try{
             async function fetchGenres(){
                 let response = await fetch("http://localhost:5000/genre/all", {
                     method: "GET",
@@ -45,7 +45,26 @@ const Movies = () => {
 
             }
             fetchGenres().then(r => r);
+
+            try{
+                async function fetchReviews(){
+                    let response = await fetch("http://localhost:5000/review/allByStatus?status=accepted", {
+                        method: "GET",
+                        headers: {
+                            "Authorization": localStorage.getItem("token")
+                        }
+                    })
+                        .then(res => res.json())
+                        .then(res => setAcceptedReviews(res))
+
+                }
+                fetchReviews().then(r => r);
+            }
+            catch (e){
+
+            }
             setButtonClicked(false)
+
         }
         catch (e){
 
@@ -78,7 +97,7 @@ const Movies = () => {
                             <div className="text-secondary shadow">Manager</div>
                             <button className="button dark color-light" onClick={() => {
                                 setModalActive(true)
-                                setModalChild(<AddMovie setActive={setModalActive} genres={genres}/>)
+                                setModalChild(<AddMovie setModalActive={setModalActive} genres={genres}/>)
                             }}> Add Movie </button>
                             <button className="button dark color-light" onClick={() => setButtonClicked(true)}> Refresh </button>
                         </div>
@@ -90,11 +109,60 @@ const Movies = () => {
                             <tr className="text-secondary">
                                 <th>Poster</th>
                                 <th>title</th>
-                                <th>Rating</th>
+                                <th>description</th>
+                                <th>Age Rating</th>
                                 <th>Actions</th>
                             </tr>
                             {data
-                                .map(movie => <Movie key={movie.Id} movie={movie} handleAction={handleAction} /> )}
+                                .sort((a, b) => a.title > b.title ? 1 : -1)
+                                .map(movie =>{
+                                    return <tr key={movie.Id}>
+                                        <td className="avatar">
+                                            <div className="avatar">
+                                                <img
+                                                    src={movie.poster}/>
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div className="text-primary color-light">{movie.title}</div>
+                                        </td>
+
+                                        <td>
+                                            <div className="text-primary color-light">{movie.description}</div>
+                                        </td>
+
+                                        <td>
+                                            <div className="text-primary color-light">{movie.ageRation}+</div>
+                                        </td>
+
+                                        <td>
+                                            <button className="button dark color-light"
+                                                    onClick={() => {
+                                                        setModalActive(true)
+                                                        setModalChild(<EditMovie movie={movie} setModalActive={setModalActive} allGenres={genres} />)
+                                                    }}>Edit
+                                            </button>
+                                            <button className="button dark color-light"
+                                                    onClick={() => {
+                                                        setModalActive(true)
+                                                        setModalChild(<div className="text-primary color-dark">
+                                                            <div>
+                                                                {movie.title}
+                                                            </div>
+                                                            <ReactPlayer controls url={movie.videoLink} />
+                                                        </div>)
+                                                    }}>Watch
+                                            </button>
+                                            <button className="button dark color-light"
+                                                    onClick={async () => {
+                                                        handleAction(movie.Id)
+                                                        await deleteFilm(movie.Id)
+                                                    }}>Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                })}
                             </tbody>
                         </table>
                     </div>

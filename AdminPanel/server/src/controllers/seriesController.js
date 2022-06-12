@@ -20,7 +20,7 @@ class seriesController {
 
         const serialId = randomUUID()
         // check genders
-        for (const genderName of genres) {
+        for (const genreName of genres) {
             const findGender = await db.query(filmsQueries.findGender, [genreName])
 
             if (findGender.rows.length === 0)
@@ -58,14 +58,36 @@ class seriesController {
     }
 
     async updateSerial(req, res, next) {
-        const {id, poster, title, numEpisodes, ageRating, userRating, description} = req.body
+        const {id, poster, title, numEpisodes, ageRating, userRating, description, genres} = req.body
 
-        const findOne = await db.query(queries.findSerialById, [id])
+        const find = await db.query(queries.findSerialById, [id])
 
-        if (findOne.rows.length === 0)
+        if (find.rows.length === 0)
             return next(new createError(404, `Not found serial!!`));
 
-        const result = await db.query(queries.updateSerial, [id, poster, title, numEpisodes, ageRating, userRating, description])
+        const deleteSer = await db.query(queries.deleteSerial, [id])
+
+        const findOne = await db.query(queries.findSerial, [title])
+        if (findOne.error)
+            return next(new createError(500, findOne.error));
+
+        if (findOne.rows.length !== 0)
+            return next(new createError(400, `Serial with name ${title} already exist`));
+
+        const serialId = id
+        // check genders
+        for (const genreName of genres) {
+            const findGender = await db.query(filmsQueries.findGender, [genreName])
+
+            if (findGender.rows.length === 0)
+                return next(new createError(500, `Gender with name ${genreName} not found`));
+        }
+        // add genders
+        for (const genreName of genres) {
+            await db.query(filmsQueries.addFilmGenre, [randomUUID(), genreName, serialId]);
+        }
+
+        const result = await db.query(queries.addSerial, [serialId, poster, title, numEpisodes, ageRating, userRating, description])
         if (result.error) return next(new createError(500, result.error));
 
         return res.status(200).json({

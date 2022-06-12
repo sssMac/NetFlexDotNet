@@ -1,32 +1,33 @@
-import React, {useEffect} from 'react';
+import React from 'react';
+import {useFormik} from "formik";
 import * as yup from "yup";
-import {Formik, useFormik} from "formik";
-import {addFilm} from "../../../../../actions/film";
+import {addFilm} from "../../../../actions/film";
+import {addSeries} from "../../../../actions/series";
 
-const AddMovie = ({setModalActive,genres}) => {
+const AddSerial = ({setActive, genres}) => {
     const formik = useFormik({
         initialValues:{
             title: "",
             poster: "",
             description:"",
             ageRating: "",
-            videoLink: "",
+            numEpisodes: "",
             genres: [],
+
 
         },validationSchema: yup.object({
             title: yup.string().required("*").max(50, 'Too long! maximum 50'),
             poster: yup.string().required("*"),
             description: yup.string().required("*").max(250, 'Too long! maximum 250'),
             ageRating: yup.string().required("*"),
-            videoLink: yup.string().required("*"),
+
             //genresAll: yup.string()
 
         }),
         onSubmit: async function (values) {
-            setModalActive(false)
+            setActive(false)
             formik.resetForm();
-            await addFilm(values.poster,values.title,0,values.ageRating,0,values.description,values.videoLink,values.poster,values.genres)
-            alert("successfully!")
+            await addSeries(values.poster, values.title, 0, values.ageRating,0,values.description, values.genres)
             console.log(values.genresAll);
 
         }
@@ -34,7 +35,7 @@ const AddMovie = ({setModalActive,genres}) => {
 
     return (
         <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-            <div className="heading color-secondary-dark">ADD MOVIE</div>
+            <div className="heading color-secondary-dark">ADD SERIES</div>
             <div className="block color-dark" label="Title">
                 <input
                     className="modal_input"
@@ -69,24 +70,6 @@ const AddMovie = ({setModalActive,genres}) => {
                     <div className="color-danger">
                         {formik.touched.poster && formik.errors.poster ? (
                             formik.errors.poster
-                        ) : null}
-                    </div>
-                </div>
-            </div>
-            <div className="block color-dark" label="VideoLink">
-                <input
-                    className="modal_input"
-                    type="url"
-                    placeholder="Video Link"
-                    name="videoLink"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.videoLink}
-                />
-                <div className="validation">
-                    <div className="color-danger">
-                        {formik.touched.videoLink && formik.errors.videoLink ? (
-                            formik.errors.videoLink
                         ) : null}
                     </div>
                 </div>
@@ -164,4 +147,4 @@ const AddMovie = ({setModalActive,genres}) => {
     )
 };
 
-export default AddMovie;
+export default AddSerial;

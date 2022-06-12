@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const addFilm = async (poster, title, duration, ageRating, userRating, description, videoLink, preview, genreName) => {
+export const addFilm = async (poster, title, duration, ageRating, userRating, description, videoLink, preview, genres) => {
     try {
         const response = await axios.post(
             "http://localhost:5000/films/addFilm",
@@ -13,7 +13,7 @@ export const addFilm = async (poster, title, duration, ageRating, userRating, de
                 description,
                 videoLink,
                 preview,
-                genreName
+                genres
             }
         );
     } catch (e) {
@@ -34,7 +34,7 @@ export const deleteFilm = async (id) => {
     }
 }
 
-export const updateFilm = async (id, poster, title, duration, ageRating, userRating, description, videoLink, preview, genreName) => {
+export const updateFilm = async (id, poster, title, duration, ageRating, userRating, description, videoLink, preview, genres) => {
     try {
         const response = await axios.post(
             "http://localhost:5000/films/updateFilm",
@@ -48,7 +48,7 @@ export const updateFilm = async (id, poster, title, duration, ageRating, userRat
                 description,
                 videoLink,
                 preview,
-                genreName
+                genres
             }
         );
     } catch (e) {

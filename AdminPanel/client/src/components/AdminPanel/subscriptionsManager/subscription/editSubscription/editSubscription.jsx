@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {editSubscription} from "../../../../../actions/subscription";
+import {addSubscription, editSubscription} from "../../../../../actions/subscription";
 import "../input.css"
 import {useForm} from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import {useFormik} from "formik";
 
 const schema = yup.object().shape({
         name: yup.string().required(),
@@ -11,53 +12,76 @@ const schema = yup.object().shape({
     });
 
 const EditSubscription = ({subscription,setModalActive}) => {
-    const [newName, setNewName] = useState('')
-    const [newCost, setNewCost] = useState('')
     console.log(subscription)
-
-
-    const { register, handleSubmit, errors } = useForm({
-        resolver: yupResolver(schema),
-    });
-
-
-    const onSubmit = data => console.log(data);
-    console.log(errors)
+    const formik = useFormik({
+        initialValues:{
+            name: subscription.Name,
+            price: subscription.Cost,
+        },validationSchema: yup.object({
+            name: yup.string().required("*").max(20),
+            price: yup.string().required("*").matches(/[0-9]+[.][0-9]{2}/, "Invalid cost"),
+        }),
+        enableReinitialize: true,
+        onSubmit: async ({name,price}) => {
+            console.log({name, price});
+            setModalActive(false)
+            await editSubscription(subscription.Id,name,price)
+            formik.resetForm();
+        }
+    })
     return (
         <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="textbox">
-                    <input type="text"
-                           name="name"
-                           placeholder="Name"
-                           value={newName}
-                           onChange={(e) => setNewName(e.target.value)}
-                           ref={register} />
-                </div>
+            <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+                <div className="heading color-secondary-dark">EDIT SUBSCRIPTION</div>
 
-                <div className="textbox">
-                    <input type="number"
-                           name="price"
-                           placeholder="Price"
-                           value={newCost}
-                           onChange={(e) => setNewCost(e.target.value)}
-                           ref={register}/>
+                <div className="block" data-label="Name">
+                    <input
+                        className="modal_input"
+                        placeholder="Name"
+                        name="name"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.name}
+                        autoComplete="off"
+                    />
                 </div>
-
-                <button className="button dark color-red" onClick={() => {
-                    setModalActive(false)
-                }}> Cancel
+                <div className="validation">
+                    <div className="color-danger error">
+                        {formik.touched.name && formik.errors.name ? (
+                            formik.errors.name
+                        ) : null}
+                    </div>
+                </div>
+                <div className="block" aria-label="Hello world">
+                    <input
+                        className="modal_input"
+                        type="text"
+                        placeholder="Price"
+                        name="price"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.price}
+                        autoComplete="off"
+                    />
+                </div>
+                <div className="validation">
+                    <div className="color-danger error">
+                        {formik.touched.price && formik.errors.price ? (
+                            formik.errors.price
+                        ) : null}
+                    </div>
+                </div>
+                <button type="reset" className="button dark color-red" onClick={() => {
+                    formik.resetForm()
+                }}> Reset
                 </button>
 
                 <button className="button dark color-green" onClick={() => {
-                    //setModalActive(false)
-                    //editSubscription(subscription.Id, newName, newCost).then(r => r)
-                }}> Submit
+                }}> Update
                 </button>
             </form>
-
         </div>
-    )
+    );
 };
 
 export default EditSubscription;

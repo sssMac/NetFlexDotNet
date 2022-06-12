@@ -1,11 +1,14 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {useSelector} from "react-redux";
 import User from "./user/user";
+import {setUser} from "../../../reducers/userReducer";
 
 const Users = () => {
     const [data, setData] = useState(null);
     const [roles, setRoles] = useState(null)
     const [buttonClick, setButtonClicked] = useState(false)
+    const [userSubs, setUserSubs] = useState([])
+    const [subs, setSubs] = useState([])
 
     useEffect( () => {
         try{
@@ -35,6 +38,33 @@ const Users = () => {
             }
             fetchRoles().then(r => r);
 
+            async function fetchUserSubs(){
+                let response = await fetch("http://localhost:5000/subscription/allUser", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setUserSubs(res))
+
+            }
+            fetchUserSubs().then(r => r);
+
+
+            async function fetchSubs(){
+                let response = await fetch("http://localhost:5000/subscription/all", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setSubs(res))
+
+            }
+            fetchSubs().then(r => r);
+            console.log(userSubs)
             setButtonClicked(false)
         }
         catch (e){

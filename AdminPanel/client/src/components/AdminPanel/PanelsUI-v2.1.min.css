@@ -112,3 +112,20 @@ button{
 .review .show_more:checked ~ .show_more_button .label:before {
 	content: "Show less";
 }
+
+.delete{
+	float: right;
+	width: 107px;
+	height: 40px;
+	margin-top: 33px;
+}
+.add{
+	float: right;
+	width: 107px;
+	height: 40px;
+	margin-top: 10px;
+}
+.left{
+	margin-top: 50px;
+	float: left;
+}

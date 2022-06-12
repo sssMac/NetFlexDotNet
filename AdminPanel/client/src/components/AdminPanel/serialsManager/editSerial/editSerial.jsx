@@ -1,40 +1,43 @@
-import React, {useEffect} from 'react';
+import React from 'react';
+import {useFormik} from "formik";
 import * as yup from "yup";
-import {Formik, useFormik} from "formik";
-import {addFilm} from "../../../../../actions/film";
+import {updateFilm} from "../../../../actions/film";
+import {updateSerial} from "../../../../actions/series";
 
-const AddMovie = ({setModalActive,genres}) => {
+const EditSerial = ({serial,setActive, allGenres}) => {
+    const serialGenres = []
+
+    serial.genrers.map((genre) => serialGenres.push(genre.GenreName))
+
     const formik = useFormik({
         initialValues:{
-            title: "",
-            poster: "",
-            description:"",
-            ageRating: "",
-            videoLink: "",
-            genres: [],
+            title: serial.title,
+            poster: serial.poster,
+            description: serial.description,
+            ageRating: serial.ageRation,
+            genres: serialGenres,
 
         },validationSchema: yup.object({
             title: yup.string().required("*").max(50, 'Too long! maximum 50'),
             poster: yup.string().required("*"),
             description: yup.string().required("*").max(250, 'Too long! maximum 250'),
             ageRating: yup.string().required("*"),
-            videoLink: yup.string().required("*"),
             //genresAll: yup.string()
 
         }),
+        enableReinitialize: true,
         onSubmit: async function (values) {
-            setModalActive(false)
+            await updateSerial(serial.Id,values.poster,values.title,0,values.ageRating,0,values.description,values.genres)
             formik.resetForm();
-            await addFilm(values.poster,values.title,0,values.ageRating,0,values.description,values.videoLink,values.poster,values.genres)
-            alert("successfully!")
-            console.log(values.genresAll);
+            setActive(false)
+
 
         }
     })
 
     return (
         <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-            <div className="heading color-secondary-dark">ADD MOVIE</div>
+            <div className="heading color-secondary-dark">EDIT SERIES</div>
             <div className="block color-dark" label="Title">
                 <input
                     className="modal_input"
@@ -69,24 +72,6 @@ const AddMovie = ({setModalActive,genres}) => {
                     <div className="color-danger">
                         {formik.touched.poster && formik.errors.poster ? (
                             formik.errors.poster
-                        ) : null}
-                    </div>
-                </div>
-            </div>
-            <div className="block color-dark" label="VideoLink">
-                <input
-                    className="modal_input"
-                    type="url"
-                    placeholder="Video Link"
-                    name="videoLink"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.videoLink}
-                />
-                <div className="validation">
-                    <div className="color-danger">
-                        {formik.touched.videoLink && formik.errors.videoLink ? (
-                            formik.errors.videoLink
                         ) : null}
                     </div>
                 </div>
@@ -134,7 +119,7 @@ const AddMovie = ({setModalActive,genres}) => {
             <div className="block" label="genres">
                 <div className="modal_checkbox_wrapper">
                     {
-                        genres.map((genre, index) => (
+                        allGenres.map((genre, index) => (
                             <div key={index} className="modal_checkbox">
                                 <input  name="genres"
                                         type="checkbox"
@@ -152,11 +137,10 @@ const AddMovie = ({setModalActive,genres}) => {
                 </div>
             </div>
 
-            <button type="submit" className="button dark color-green"> Submit
+            <button type='submit' className="button dark color-green"> Submit
             </button>
 
             <button type="reset" className="button dark color-red" onClick={() => {
-                formik.resetForm();
             }}> Reset
             </button>
         </form>
@@ -164,4 +148,4 @@ const AddMovie = ({setModalActive,genres}) => {
     )
 };
 
-export default AddMovie;
+export default EditSerial;

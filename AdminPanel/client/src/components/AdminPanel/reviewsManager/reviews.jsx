@@ -8,6 +8,8 @@ const Reviews = () => {
     const [data, setData] = useState([]);
     const [modalActive, setModalActive] = useState(false)
     const [modalChild, setModalChild] = useState(<div/>)
+    const [movies, setMovies] = useState([])
+    const [series, setSeries] = useState([])
     const [buttonClick, setButtonClicked] = useState(false)
 
 
@@ -15,7 +17,7 @@ const Reviews = () => {
     useEffect( () => {
         try{
             async function fetchReviews(){
-                let response = await fetch("http://localhost:5000/review/allByStatus?status=accepted", {
+                let response = await fetch("http://localhost:5000/review/allByStatus?status=pending", {
                     method: "GET",
                     headers: {
                         "Authorization": localStorage.getItem("token")
@@ -26,6 +28,32 @@ const Reviews = () => {
 
             }
             fetchReviews().then(r => r);
+
+            async function fetchMovie(){
+                let response = await fetch("http://localhost:5000/films/all", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setMovies(res))
+
+            }
+            fetchMovie().then(r => r);
+
+            async function fetchSerials(){
+                let response = await fetch("http://localhost:5000/series/all", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                })
+                    .then(res => res.json())
+                    .then(res => setSeries(res))
+
+            }
+            fetchSerials().then(r => r);
             setButtonClicked(false)
         }
         catch (e){
@@ -83,7 +111,7 @@ const Reviews = () => {
     const handlePending = () => {
         try{
             async function fetchReviews(){
-                let response = await fetch("http://localhost:5000/review/allByStatus?status=onpending", {
+                let response = await fetch("http://localhost:5000/review/allByStatus?status=pending", {
                     method: "GET",
                     headers: {
                         "Authorization": localStorage.getItem("token")
@@ -121,7 +149,7 @@ const Reviews = () => {
                             <div className="text-secondary shadow">Manager</div>
                             <button className="button dark color-light" onClick={() => {
                                 setModalActive(true)
-                                setModalChild(<PublicReview setActive={setModalActive}/>)
+                                setModalChild(<PublicReview setActive={setModalActive} movies={movies} series={series}/>)
                             }}> Test review </button>
                             <button className="button dark color-light" onClick={() => setButtonClicked(true)}> Refresh </button>
                         </div>

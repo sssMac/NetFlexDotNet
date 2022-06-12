@@ -139,10 +139,9 @@
 }
 .modal .modal_wrapper {
   pointer-events: none;
-  transition: 1s all;
+  transition: 0.5s all;
   transform: scale(0);
   font-family: "Noto Sans", sans-serif;
-  width: 40%;
   border-radius: 20px;
   padding: 20px;
   box-sizing: border-box;
@@ -150,8 +149,7 @@
 .modal .modal_wrapper .heading {
   font-size: 14pt;
   font-weight: 600;
-  margin-bottom: 10px;
-  margin: 10px;
+  margin-left: 85px !important;
   padding-left: 0 !important;
 }
 .modal .modal_wrapper .horizontal {

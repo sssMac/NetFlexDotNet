@@ -1,10 +1,11 @@
 import axios from "axios";
 
-export const addEpisode = async (title, serialId, duration, number, videoLink, previewVideo) => {
+export const addEpisode = async (id,title, serialId, duration, number, videoLink, previewVideo) => {
     try {
         const response = await axios.post(
             "http://localhost:5000/episodes/addEpisode",
             {
+                id,
                 title,
                 serialId,
                 duration,
@@ -27,7 +28,7 @@ export const deleteEpisode = async (id) => {
             }
         );
     } catch (e) {
-        alert(e);
+
     }
 }
 
@@ -50,13 +51,10 @@ export const updateEpisode = async (id, title, serialId, duration, number, video
     }
 }
 
-export const episodesBySerialId = async (id) => {
+export const episodesBySerialId = async (serialId) => {
     try {
         const response = await axios.get(
-            "http://localhost:5000/episodes/episodesBySerialId",
-            {
-                id
-            }
+            `http://localhost:5000/episodes/episodesBySerialId?serialId=${serialId}`,
         );
     } catch (e) {
         alert(e);

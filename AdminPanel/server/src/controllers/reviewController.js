@@ -4,6 +4,7 @@ const db = require("../database/db");
 const queries = require("../queries/reviewQueries");
 const {randomUUID} = require("crypto");
 
+
 class ReviewController {
     async allReview(req, res, next) {
         const result = await db.query(queries.getAll)
@@ -44,6 +45,7 @@ class ReviewController {
         }
         const Id = req.body.Id
         const findOne = await db.query(queries.getById, [Id])
+        await setRating(Id)
 
         if (findOne.rows.length === 0)
             return next(new createError(401, `review with id ${Id} not found!!`))
@@ -116,9 +118,10 @@ class ReviewController {
 
         if (find.rows.length === 0)
             return next(new createError(401, `Review with id ${Id} not found!!`))
-        const Status = "onpending"
+        const Status = "pending"
         const result = await db.query(queries.changeStatus, [Status,Id])
         if (result.error) return next(new createError(401, result.error));
+
 
         return res.status(200).json({
             message: `Review on pending`
@@ -134,7 +137,9 @@ class ReviewController {
 
         res.status(200).json(result.rows)
     }
+
 }
+
 
 
 module.exports = new ReviewController();

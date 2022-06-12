@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const addSeries = async (poster, title, numEpisodes, ageRating, userRating, description) => {
+export const addSeries = async (poster, title, numEpisodes, ageRating, userRating, description, genres) => {
     try {
         const response = await axios.post(
             "http://localhost:5000/series/addSerial",
@@ -10,7 +10,8 @@ export const addSeries = async (poster, title, numEpisodes, ageRating, userRatin
                 numEpisodes,
                 ageRating,
                 userRating,
-                description
+                description,
+                genres
             }
         );
     } catch (e) {
@@ -31,10 +32,10 @@ export const deleteSeries = async (id) => {
     }
 }
 
-export const updateSerial = async (id, poster, title, numEpisodes, ageRating, userRating, description) => {
+export const updateSerial = async (id, poster, title, numEpisodes, ageRating, userRating, description, genres) => {
     try {
         const response = await axios.post(
-            "http://localhost:5000/series/deleteSerial",
+            "http://localhost:5000/series/updateSerial",
             {
                 id,
                 poster,
@@ -42,7 +43,8 @@ export const updateSerial = async (id, poster, title, numEpisodes, ageRating, us
                 numEpisodes,
                 ageRating,
                 userRating,
-                description
+                description,
+                genres
             }
         );
     } catch (e) {
